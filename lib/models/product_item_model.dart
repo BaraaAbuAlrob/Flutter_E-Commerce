@@ -1,0 +1,111 @@
+class ProductItemModel {
+  final String id;
+  final String name;
+  final String imgUrl;
+  final String description;
+  final double price;
+  final bool isFavorite;
+  final String category;
+
+  ProductItemModel({
+    required this.id,
+    required this.name,
+    required this.imgUrl,
+    this.description =
+        'write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products...',
+    required this.price,
+    this.isFavorite = false,
+    this.category = 'Others',
+  });
+}
+
+List<ProductItemModel> dummyProducts = [
+  ProductItemModel(
+    id: '1',
+    name: 'T-shirt',
+    imgUrl:
+    'https://pngimg.com/uploads/tshirt/tshirt_PNG5450.png',
+    price: 10,
+    category: 'Clothes',
+  ),
+  ProductItemModel(
+    id: '2',
+    name: 'Black Shoes',
+    imgUrl:
+    'https://pngimg.com/uploads/running_shoes/running_shoes_PNG5823.png',
+    price: 20,
+    category: 'Shoes',
+  ),
+  ProductItemModel(
+    id: '3',
+    name: 'Trousers',
+    imgUrl:
+    'https://pngimg.com/uploads/jeans/jeans_PNG5775.png',
+    price: 30,
+    category: 'Clothes',
+  ),
+  ProductItemModel(
+    id: '4',
+    name: 'Pack of Tomatoes',
+    imgUrl:
+    'https://pngimg.com/uploads/tomato/tomato_PNG12594.png',
+    price: 10,
+    category: 'Groceries',
+  ),
+  ProductItemModel(
+    id: '5',
+    name: 'Pack of Potatoes',
+    imgUrl:
+    'https://pngimg.com/uploads/potato/potato_PNG7081.png',
+    price: 10,
+    category: 'Groceries',
+  ),
+  ProductItemModel(
+    id: '6',
+    name: 'Pack of Onions',
+    imgUrl:
+    'https://pngimg.com/uploads/onion/onion_PNG3821.png',
+    price: 10,
+    category: 'Groceries',
+  ),
+  ProductItemModel(
+    id: '7',
+    name: 'Pack of Apples',
+    imgUrl:
+    'https://pngimg.com/uploads/apple/apple_PNG12405.png',
+    price: 10,
+    category: 'Fruits',
+  ),
+  ProductItemModel(
+    id: '8',
+    name: 'Pack of Oranges',
+    imgUrl:
+    'https://pngimg.com/uploads/orange/orange_PNG780.png',
+    price: 10,
+    category: 'Fruits',
+  ),
+  ProductItemModel(
+    id: '9',
+    name: 'Pack of Bananas',
+    imgUrl:
+    'https://pngimg.com/uploads/banana/banana_PNG827.png',
+    price: 10,
+    category: 'Fruits',
+  ),
+  ProductItemModel(
+    id: '10',
+    name: 'Pack of Mangoes',
+    imgUrl:
+    'https://pngimg.com/uploads/mango/mango_PNG9179.png',
+    price: 10,
+    category: 'Fruits',
+  ),
+  ProductItemModel(
+    id: '11',
+    name: 'Sweet Shirt',
+    imgUrl:
+    'https://pngimg.com/uploads/hoodie/hoodie_PNG38.png',
+    price: 15,
+    category: 'Clothes',
+  ),
+];
