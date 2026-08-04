@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:flutter_ecommerce_app/models/home_carousel_item_model.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
 import 'package:flutter_ecommerce_app/views/widgets/product_item.dart';
 
@@ -76,7 +78,29 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 24.0),
+                FlutterCarousel.builder(
+                  itemCount: dummyHomeCarouselItems.length,
+                  itemBuilder:
+                      (
+                        BuildContext context,
+                        int itemIndex,
+                        int pageViewIndex,
+                      ) => Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 28.0),
+                        child: Image.network(
+                          dummyHomeCarouselItems[itemIndex].imgUrl,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                  options: FlutterCarouselOptions(
+                    height: 200,
+                    showIndicator: true,
+                    autoPlay: true,
+                    slideIndicator: CircularWaveSlideIndicator(),
+                  ),
+                ),
+                const SizedBox(height: 24.0),
                 GridView.builder(
                   itemCount: dummyProducts.length,
                   shrinkWrap: true,
