@@ -1,0 +1,107 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_app/views/pages/cart_page.dart';
+import 'package:flutter_ecommerce_app/views/pages/favorites_page.dart';
+import 'package:flutter_ecommerce_app/views/pages/home_page.dart';
+import 'package:flutter_ecommerce_app/views/pages/profile_page.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+
+class CustomBottomNavbar extends StatefulWidget {
+  const CustomBottomNavbar({super.key});
+
+  @override
+  State<CustomBottomNavbar> createState() => _CustomBottomNavbarState();
+}
+
+class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
+  late final PersistentTabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PersistentTabController(initialIndex: 0);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // الألوان المستعملة للتصميم
+    final primaryColor = Theme.of(context).primaryColor;
+    final inactiveColor = Theme.of(context).disabledColor;
+
+    return PersistentTabView(
+      controller: _controller,
+      tabs: [
+        // 1. الصفحة الرئيسية - Home
+        PersistentTabConfig(
+          screen: const HomePage(),
+          item: ItemConfig(
+            icon: const Icon(Icons.home),
+            inactiveIcon: const Icon(Icons.home_outlined),
+            title: "Home",
+            activeForegroundColor: primaryColor,
+            inactiveForegroundColor: inactiveColor,
+          ),
+        ),
+
+        // 2. المفضلة - Favorites
+        PersistentTabConfig(
+          screen: const FavoritesPage(),
+          item: ItemConfig(
+            icon: const Icon(Icons.favorite),
+            inactiveIcon: const Icon(Icons.favorite_border),
+            title: "Favorites",
+            activeForegroundColor: primaryColor,
+            inactiveForegroundColor: inactiveColor,
+          ),
+        ),
+
+        // 3. السلة - Cart
+        PersistentTabConfig(
+          screen: const CartPage(),
+          item: ItemConfig(
+            icon: const Icon(Icons.shopping_cart),
+            inactiveIcon: const Icon(Icons.shopping_cart_outlined),
+            title: "Cart",
+            activeForegroundColor: primaryColor,
+            inactiveForegroundColor: inactiveColor,
+          ),
+        ),
+
+        // 4. الحساب الشخصي - Profile
+        PersistentTabConfig(
+          screen: const ProfilePage(),
+          item: ItemConfig(
+            icon: const Icon(Icons.person),
+            inactiveIcon: const Icon(Icons.person_outline),
+            title: "Profile",
+            activeForegroundColor: primaryColor,
+            inactiveForegroundColor: inactiveColor,
+          ),
+        ),
+      ],
+
+      // تعديل استايل وخصائص الـ Navbar هنا:
+      navBarBuilder: (navBarConfig) => Style6BottomNavBar(
+        navBarConfig: navBarConfig,
+        navBarDecoration: NavBarDecoration(
+          padding: const EdgeInsets.all(10),
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, -3),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
