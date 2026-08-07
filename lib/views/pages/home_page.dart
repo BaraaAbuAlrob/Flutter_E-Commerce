@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_ecommerce_app/models/home_carousel_item_model.dart';
@@ -88,9 +89,15 @@ class HomePage extends StatelessWidget {
                         int pageViewIndex,
                       ) => Padding(
                         padding: const EdgeInsetsDirectional.only(end: 28.0),
-                        child: Image.network(
-                          dummyHomeCarouselItems[itemIndex].imgUrl,
+                        child: CachedNetworkImage(
+                          imageUrl: dummyHomeCarouselItems[itemIndex].imgUrl,
                           fit: BoxFit.fill,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                          errorWidget: (context, url, error) => const Center(
+                            child: Icon(Icons.error, color: Colors.red),
+                          ),
                         ),
                       ),
                   options: FlutterCarouselOptions(
