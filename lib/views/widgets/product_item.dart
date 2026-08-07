@@ -33,11 +33,19 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Positioned(
+              height: 40.0,
+              width: 40.0,
               top: 0.0,
               right: 0.0,
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.favorite_border),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.50),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.favorite_border),
+                ),
               ),
             ),
           ],
