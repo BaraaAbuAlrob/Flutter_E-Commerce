@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/views/widgets/categories_tab_view.dart';
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     children: [
                       const CircleAvatar(
                         radius: 25,
-                        backgroundImage: NetworkImage(
+                        backgroundImage: CachedNetworkImageProvider(
                           'https://res.cloudinary.com/dbahe7lxz/image/upload/v1785859558/idraaak/qqyxqerw3sc7esxsmeqb.jpg',
                         ),
                       ),
@@ -83,10 +84,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: const [
-                    HomeTabView(),
-                    CategoriesTabView(),
-                  ],
+                  children: const [HomeTabView(), CategoriesTabView()],
                 ),
               ),
             ],
