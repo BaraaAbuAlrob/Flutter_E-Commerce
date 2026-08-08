@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/product_item.dart';
 
@@ -81,7 +82,15 @@ class HomeTabView extends StatelessWidget {
                     mainAxisExtent: 230.0,
                   ),
                   itemBuilder: (context, index) {
-                    return ProductItem(productItem: state.products[index]);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(
+                          context,
+                          // rootNavigator: true, // If rootNavigator is set to true, the state from the furthest instance of this class is given instead. Useful for pushing contents above all subsequent instances of [Navigator].
+                        ).pushNamed(AppRoutes.productDetailsPage);
+                      },
+                      child: ProductItem(productItem: state.products[index]),
+                    );
                   },
                 ),
               ],
