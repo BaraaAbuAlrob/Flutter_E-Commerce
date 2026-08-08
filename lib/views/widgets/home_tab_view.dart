@@ -40,14 +40,17 @@ class HomeTabView extends StatelessWidget {
                 (BuildContext context, int itemIndex, int pageViewIndex) =>
                     Padding(
                       padding: const EdgeInsetsDirectional.only(end: 28.0),
-                      child: CachedNetworkImage(
-                        imageUrl: dummyHomeCarouselItems[itemIndex].imgUrl,
-                        fit: BoxFit.fill,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
-                        errorWidget: (context, url, error) => const Center(
-                          child: Icon(Icons.error, color: Colors.red),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: CachedNetworkImage(
+                          imageUrl: dummyHomeCarouselItems[itemIndex].imgUrl,
+                          fit: BoxFit.fill,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                          errorWidget: (context, url, error) => const Center(
+                            child: Icon(Icons.error, color: Colors.red),
+                          ),
                         ),
                       ),
                     ),
