@@ -27,6 +27,6 @@ List<HomeCarouselItemModel> dummyHomeCarouselItems = [
   HomeCarouselItemModel(
     id: '4',
     imgUrl:
-    'https://e0.pxfuel.com/wallpapers/606/84/desktop-wallpaper-ecommerce-website-design-company-noida-e-commerce-banner-design-e-commerce.jpg',
+    'https://img.pixelvault.dev/playground/tmp_5u7t1go6xm1n.jpg',
   ),
 ];
