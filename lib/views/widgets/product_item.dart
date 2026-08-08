@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 
 class ProductItem extends StatelessWidget {
   final ProductItemModel productItem;
@@ -18,7 +19,7 @@ class ProductItem extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
-                color: Colors.grey.shade200,
+                color: AppColors.greyWithShade300,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -27,8 +28,9 @@ class ProductItem extends StatelessWidget {
                   fit: BoxFit.contain,
                   placeholder: (context, url) =>
                       const Center(child: CircularProgressIndicator.adaptive()),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.error, color: Colors.red)),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(Icons.error, color: AppColors.red),
+                  ),
                 ),
               ),
             ),
@@ -63,7 +65,7 @@ class ProductItem extends StatelessWidget {
           productItem.category,
           style: Theme.of(
             context,
-          ).textTheme.labelMedium!.copyWith(color: Colors.grey),
+          ).textTheme.labelMedium!.copyWith(color: AppColors.grey),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

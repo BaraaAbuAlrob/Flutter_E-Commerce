@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/views/pages/cart_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/favorites_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/home_page.dart';
@@ -90,7 +91,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
         navBarConfig: navBarConfig,
         navBarDecoration: NavBarDecoration(
           padding: const EdgeInsets.all(10),
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
