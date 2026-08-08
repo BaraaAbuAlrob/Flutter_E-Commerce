@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/views/widgets/categories_tab_view.dart';
 
 import '../widgets/home_tab_view.dart';
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           Text(
                             'Let\'s go shopping!',
                             style: Theme.of(context).textTheme.labelSmall!
-                                .copyWith(color: Colors.grey),
+                                .copyWith(color: AppColors.grey),
                           ),
                         ],
                       ),
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               const SizedBox(height: 24.0),
               TabBar(
                 controller: _tabController,
-                unselectedLabelColor: Colors.grey,
+                unselectedLabelColor: AppColors.grey,
                 tabs: const [
                   Tab(text: 'Home'),
                   Tab(text: 'Categories'),
