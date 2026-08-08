@@ -62,16 +62,15 @@ class HomeTabView extends StatelessWidget {
               slideIndicator: CircularWaveSlideIndicator(),
             ),
           ),
-          const SizedBox(height: 24.0),
+          const SizedBox(height: 32.0),
           GridView.builder(
             itemCount: dummyProducts.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 25,
-              crossAxisSpacing: 10,
-              mainAxisExtent: 230,
+              crossAxisSpacing: 16.0,
+              mainAxisExtent: 230.0,
             ),
             itemBuilder: (context, index) {
               return ProductItem(productItem: dummyProducts[index]);
