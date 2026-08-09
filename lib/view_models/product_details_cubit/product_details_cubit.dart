@@ -1,0 +1,23 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/models/product_item_model.dart';
+
+part 'product_details_state.dart';
+
+class ProductDetailsCubit extends Cubit<ProductDetailsState> {
+  ProductDetailsCubit() : super(ProductDetailsInitial());
+
+  void getProductDetails({required String productId}) async {
+    final ProductItemModel product = dummyProducts.firstWhere(
+      (item) => item.id == productId,
+    );
+    emit(ProductDetailsLoading());
+    try {
+      await Future.delayed(
+        Duration(seconds: 1),
+        () => emit(ProductDetailsLoaded(product: product)),
+      );
+    } catch (e) {
+      emit(ProductDetailsError(message: e.toString()));
+    }
+  }
+}
