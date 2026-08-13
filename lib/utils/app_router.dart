@@ -22,7 +22,7 @@ class AppRouter {
               cubit.getProductDetails(productId: productId);
               return cubit;
             },
-            child: ProductDetailsPage(),
+            child: ProductDetailsPage(productId: productId),
           ),
           settings: settings,
         );
