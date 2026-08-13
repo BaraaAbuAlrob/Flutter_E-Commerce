@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/models/category_model.dart';
 
@@ -6,7 +5,7 @@ class CategoriesTabView extends StatelessWidget {
   const CategoriesTabView({super.key});
 
   Widget categoryImg(CategoryModel category) =>
-      CachedNetworkImage(imageUrl: category.imageUrl, width: 100, height: 100);
+      Image.asset(category.imagePath, width: 100, height: 100);
 
   Widget categoryInfo(BuildContext context, CategoryModel category) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,

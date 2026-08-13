@@ -6,6 +6,8 @@ class ProductItemModel {
   final double price;
   final bool isFavorite;
   final String category;
+  final String averageRate;
+  final int quantity;
 
   ProductItemModel({
     required this.id,
@@ -16,7 +18,33 @@ class ProductItemModel {
     required this.price,
     this.isFavorite = false,
     this.category = 'Others',
+    this.averageRate = '0.0',
+    this.quantity = 1,
   });
+
+  ProductItemModel copyWith({
+    String? id,
+    String? name,
+    String? imgUrl,
+    String? description,
+    double? price,
+    bool? isFavorite,
+    String? category,
+    String? averageRate,
+    int? quantity,
+  }) {
+    return ProductItemModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imgUrl: imgUrl ?? this.imgUrl,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      isFavorite: isFavorite ?? this.isFavorite,
+      category: category ?? this.category,
+      averageRate: averageRate ?? this.averageRate,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }
 
 List<ProductItemModel> dummyProducts = [
@@ -27,6 +55,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/tshirt/tshirt_PNG5450.png',
     price: 10,
     category: 'Clothes',
+    averageRate: '4.5',
   ),
   ProductItemModel(
     id: '2',
@@ -35,6 +64,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/running_shoes/running_shoes_PNG5823.png',
     price: 20,
     category: 'Shoes',
+    averageRate: '4.0',
   ),
   ProductItemModel(
     id: '3',
@@ -43,6 +73,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/jeans/jeans_PNG5775.png',
     price: 30,
     category: 'Clothes',
+    averageRate: '4.2',
   ),
   ProductItemModel(
     id: '4',
@@ -51,6 +82,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/tomato/tomato_PNG12594.png',
     price: 10,
     category: 'Groceries',
+    averageRate: '4.0',
   ),
   ProductItemModel(
     id: '5',
@@ -59,6 +91,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/potato/potato_PNG7081.png',
     price: 10,
     category: 'Groceries',
+    averageRate: '4.0',
   ),
   ProductItemModel(
     id: '6',
@@ -67,6 +100,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/onion/onion_PNG3821.png',
     price: 10,
     category: 'Groceries',
+    averageRate: '3.0',
   ),
   ProductItemModel(
     id: '7',
@@ -75,6 +109,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/apple/apple_PNG12405.png',
     price: 10,
     category: 'Fruits',
+    averageRate: '4.7'
   ),
   ProductItemModel(
     id: '8',
@@ -83,6 +118,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/orange/orange_PNG780.png',
     price: 10,
     category: 'Fruits',
+    averageRate: '3.1'
   ),
   ProductItemModel(
     id: '9',
@@ -91,6 +127,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/banana/banana_PNG827.png',
     price: 10,
     category: 'Fruits',
+    averageRate: '4.3'
   ),
   ProductItemModel(
     id: '10',
@@ -99,6 +136,7 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/mango/mango_PNG9179.png',
     price: 10,
     category: 'Fruits',
+    averageRate: '2.7'
   ),
   ProductItemModel(
     id: '11',
@@ -107,5 +145,6 @@ List<ProductItemModel> dummyProducts = [
     'https://pngimg.com/uploads/hoodie/hoodie_PNG38.png',
     price: 15,
     category: 'Clothes',
+    averageRate: '2.4'
   ),
 ];

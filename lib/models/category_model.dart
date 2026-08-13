@@ -7,7 +7,7 @@ class CategoryModel {
   final int productsCount;
   final Color bgColor;
   final Color textColor;
-  final String imageUrl;
+  final String imagePath;
 
   CategoryModel({
     required this.id,
@@ -15,7 +15,7 @@ class CategoryModel {
     required this.productsCount,
     this.bgColor = AppColors.primary,
     this.textColor = AppColors.white,
-    this.imageUrl =
+    this.imagePath =
         'https://img.pixelvault.dev/playground/tmp_4k77xiu8c4je.png',
   });
 }
@@ -27,7 +27,7 @@ List<CategoryModel> dummyCategories = [
     productsCount: 208,
     bgColor: AppColors.blue,
     textColor: AppColors.white,
-    imageUrl: 'https://img.pixelvault.dev/playground/tmp_h8ydkxtu8imz.png',
+    imagePath: 'assets/images/category_images/new_arrival.png',
   ),
   CategoryModel(
     id: '2',
@@ -35,7 +35,7 @@ List<CategoryModel> dummyCategories = [
     productsCount: 358,
     bgColor: AppColors.green,
     textColor: AppColors.white,
-    imageUrl: 'https://img.pixelvault.dev/playground/tmp_phj9wwkdx4hu.png',
+    imagePath: 'assets/images/category_images/clothes.png',
   ),
   CategoryModel(
     id: '3',
@@ -43,7 +43,7 @@ List<CategoryModel> dummyCategories = [
     productsCount: 160,
     bgColor: AppColors.black,
     textColor: AppColors.white,
-    imageUrl: 'https://img.pixelvault.dev/playground/tmp_czf3ess4b36b.png',
+    imagePath: 'assets/images/category_images/school_bag.png',
   ),
   CategoryModel(
     id: '4',
@@ -51,7 +51,7 @@ List<CategoryModel> dummyCategories = [
     productsCount: 230,
     bgColor: AppColors.white,
     textColor: AppColors.black,
-    imageUrl: 'https://img.pixelvault.dev/playground/tmp_xjj9ileicmav.png',
+    imagePath: 'assets/images/category_images/shoes.png',
   ),
   CategoryModel(
     id: '5',
@@ -59,6 +59,6 @@ List<CategoryModel> dummyCategories = [
     productsCount: 101,
     bgColor: AppColors.primary,
     textColor: AppColors.black,
-    imageUrl: 'https://img.pixelvault.dev/playground/tmp_x2zysqvawp1b.png',
+    imagePath: 'assets/images/category_images/electronics.png',
   ),
 ];
