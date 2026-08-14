@@ -1,6 +1,6 @@
-enum ProductSize { S, M, L, XL }
+enum ProductSize { ns, S, M, L, XL }
 
-enum ProductColor { black, white, red, blue, green, yellow }
+enum ProductColor { nc, black, white, red, blue, green, yellow }
 
 class ProductItemModel {
   final String id;
@@ -12,8 +12,8 @@ class ProductItemModel {
   final String category;
   final String averageRate;
   final int quantity;
-  final ProductColor? color;
-  final ProductSize? size;
+  final ProductColor color;
+  final ProductSize size;
 
   ProductItemModel({
     required this.id,
@@ -26,8 +26,8 @@ class ProductItemModel {
     this.category = 'Others',
     this.averageRate = '0.0',
     this.quantity = 1,
-    this.color,
-    this.size,
+    this.color = ProductColor.nc,
+    this.size = ProductSize.ns,
   });
 
   ProductItemModel copyWith({

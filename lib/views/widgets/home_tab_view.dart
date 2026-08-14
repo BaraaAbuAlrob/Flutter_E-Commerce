@@ -86,7 +86,7 @@ class HomeTabView extends StatelessWidget {
                       onTap: () {
                         Navigator.of(
                           context,
-                          // rootNavigator: true, // If rootNavigator is set to true, the state from the furthest instance of this class is given instead. Useful for pushing contents above all subsequent instances of [Navigator].
+                          rootNavigator: true,
                         ).pushNamed(
                           AppRoutes.productDetailsPage,
                           arguments: state.products[index].id,

@@ -11,14 +11,205 @@ class ProductDetailsPage extends StatelessWidget {
 
   const ProductDetailsPage({super.key, required this.productId});
 
+  Widget sizeList({
+    required ProductSize size,
+    required BuildContext context,
+    required ProductDetailsState state,
+  }) {
+    final cubit = BlocProvider.of<ProductDetailsCubit>(context);
+    bool isSelected = state is SizeSelected && state.size == size;
+    try {
+      if (state is ProductDetailsLoaded) {
+        isSelected = cubit.selectedSize == size;
+      }
+    } catch (_) {}
+
+    final primaryColor = AppColors.primary;
+
+    if (size.name == 'ns') {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isSelected ? primaryColor : AppColors.grey100,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? primaryColor : AppColors.grey300,
+            width: isSelected ? 2 : 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.not_interested_rounded,
+            size: 20,
+            color: isSelected ? AppColors.white : AppColors.grey500,
+          ),
+        ),
+      );
+    } else {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isSelected ? primaryColor : AppColors.grey100,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? primaryColor : AppColors.grey300,
+            width: isSelected ? 2 : 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Center(
+          child: Text(
+            size.name,
+            style: TextStyle(
+              fontSize: isSelected ? 15 : 14,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+              color: isSelected ? AppColors.white : AppColors.black87,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget colorList({
+    required ProductColor color,
+    required BuildContext context,
+    required ProductDetailsState state,
+  }) {
+    final cubit = BlocProvider.of<ProductDetailsCubit>(context);
+    bool isSelected = state is ColorSelected && state.color == color;
+    try {
+      if (state is ProductDetailsLoaded) {
+        isSelected = cubit.selectedColor == color;
+      }
+    } catch (_) {}
+
+    final primaryColor = AppColors.primary;
+
+    if (color.name == 'nc') {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        width: 42,
+        height: 42,
+        padding: EdgeInsets.all(isSelected ? 8.0 : 0.0),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? primaryColor : AppColors.grey300,
+            width: isSelected ? 2.5 : 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 3,
+                    offset: const Offset(0, 0),
+                  ),
+                ]
+              : null,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isSelected
+                ? primaryColor.withValues(alpha: 0.15)
+                : AppColors.grey100,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.not_interested_rounded,
+              size: isSelected ? 20 : 18,
+              color: isSelected ? AppColors.white : AppColors.grey500,
+            ),
+          ),
+        ),
+      );
+    } else {
+      final actualColor =
+          AppColors.getColorByName(color.name) ?? Colors.transparent;
+      final bool isLightColor = color.name == 'white' || color.name == 'yellow';
+
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        width: 42,
+        height: 42,
+        padding: EdgeInsets.all(isSelected ? 3.0 : 0.0),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected
+                ? primaryColor
+                : (color.name == 'white'
+                      ? AppColors.grey300
+                      : Colors.transparent),
+            width: isSelected ? 2.5 : 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 0),
+                  ),
+                ]
+              : null,
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 350),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: actualColor,
+            border: Border.all(
+              color: color.name == 'white'
+                  ? AppColors.grey300
+                  : AppColors.black12,
+              width: 1,
+            ),
+          ),
+          child: isSelected
+              ? Center(
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 18,
+                    color: isLightColor ? AppColors.black87 : AppColors.white,
+                  ),
+                )
+              : null,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
     return BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
       bloc: BlocProvider.of<ProductDetailsCubit>(context),
-      buildWhen: (previous, current) => current is! QuantityCounterLoaded,
+      buildWhen: (previous, current) =>
+          current is ProductDetailsLoading ||
+          current is ProductDetailsLoaded ||
+          current is ProductDetailsError,
       builder: (context, state) {
         if (state is ProductDetailsLoading) {
           return const Scaffold(
@@ -49,7 +240,7 @@ class ProductDetailsPage extends StatelessWidget {
                   right: 0,
                   height: size.height * 0.52,
                   child: Container(
-                    decoration: BoxDecoration(color: AppColors.greyWithShade300),
+                    decoration: BoxDecoration(color: AppColors.grey300),
                     child: Column(
                       children: [
                         SizedBox(height: size.height * 0.1),
@@ -89,11 +280,10 @@ class ProductDetailsPage extends StatelessWidget {
                                 children: [
                                   Text(
                                     product.name,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 6),
                                   Row(
@@ -114,8 +304,13 @@ class ProductDetailsPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
-                                bloc: BlocProvider.of<ProductDetailsCubit>(context),
+                              BlocBuilder<
+                                ProductDetailsCubit,
+                                ProductDetailsState
+                              >(
+                                bloc: BlocProvider.of<ProductDetailsCubit>(
+                                  context,
+                                ),
                                 buildWhen: (previous, current) =>
                                     current is QuantityCounterLoaded ||
                                     current is ProductDetailsLoaded,
@@ -124,13 +319,19 @@ class ProductDetailsPage extends StatelessWidget {
                                     return CounterWidget(
                                       value: state.value,
                                       productId: product.id,
-                                      cubit: BlocProvider.of<ProductDetailsCubit>(context),
+                                      cubit:
+                                          BlocProvider.of<ProductDetailsCubit>(
+                                            context,
+                                          ),
                                     );
                                   } else if (state is ProductDetailsLoaded) {
                                     return CounterWidget(
                                       value: state.product.quantity,
                                       productId: product.id,
-                                      cubit: BlocProvider.of<ProductDetailsCubit>(context),
+                                      cubit:
+                                          BlocProvider.of<ProductDetailsCubit>(
+                                            context,
+                                          ),
                                     );
                                   } else {
                                     return const SizedBox.shrink();
@@ -142,70 +343,32 @@ class ProductDetailsPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             'Size',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
                           ),
-                          Row(
-                            children: ProductSize.values
-                                .map(
-                                  (size) => Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 6.0,
-                                      right: 8.0,
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: AppColors.greyWithShade300,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Text(size.name),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Color',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: ProductColor.values
+                          BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+                            bloc: BlocProvider.of<ProductDetailsCubit>(context),
+                            buildWhen: (previous, current) =>
+                                current is ProductDetailsLoaded ||
+                                current is SizeSelected,
+                            builder: (context, state) => Row(
+                              children: ProductSize.values
                                   .map(
-                                    (color) => Padding(
+                                    (size) => Padding(
                                       padding: const EdgeInsets.only(
                                         top: 6.0,
                                         right: 8.0,
                                       ),
                                       child: InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          width: 35,
-                                          height: 35,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: AppColors.getColorByName(
-                                              color.name,
-                                            ),
-                                            border: Border.all(
-                                                color: AppColors.black45,
-                                            ),
-                                          ),
+                                        onTap: () {
+                                          BlocProvider.of<ProductDetailsCubit>(
+                                            context,
+                                          ).selectSize(size);
+                                        },
+                                        child: sizeList(
+                                          size: size,
+                                          context: context,
+                                          state: state,
                                         ),
                                       ),
                                     ),
@@ -215,21 +378,61 @@ class ProductDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
+                            'Color',
+                            style: Theme.of(context).textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child:
+                                BlocBuilder<
+                                  ProductDetailsCubit,
+                                  ProductDetailsState
+                                >(
+                                  bloc: BlocProvider.of<ProductDetailsCubit>(
+                                    context,
+                                  ),
+                                  buildWhen: (previous, current) =>
+                                      current is ProductDetailsLoaded ||
+                                      current is ColorSelected,
+                                  builder: (context, state) => Row(
+                                    children: ProductColor.values
+                                        .map(
+                                          (color) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 6.0,
+                                              right: 8.0,
+                                            ),
+                                            child: InkWell(
+                                              onTap: () {
+                                                BlocProvider.of<
+                                                      ProductDetailsCubit
+                                                    >(context)
+                                                    .selectColor(color);
+                                              },
+                                              child: colorList(
+                                                color: color,
+                                                context: context,
+                                                state: state,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
                             'Description',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
                             product.description,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelMedium!.copyWith(
-                              color: AppColors.black45,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium!
+                                .copyWith(color: AppColors.black45),
                           ),
                         ],
                       ),
@@ -241,6 +444,8 @@ class ProductDetailsPage extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: Container(
+                    width: double.infinity,
+                    height: 100,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 36.0,
                       vertical: 16.0,
@@ -264,34 +469,76 @@ class ProductDetailsPage extends StatelessWidget {
                         Text.rich(
                           TextSpan(
                             text: '\$',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                  fontSize: 24,
+                                ),
                             children: [
                               TextSpan(
                                 text: product.price.toString(),
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleLarge!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Theme.of(context).textTheme.titleLarge!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 36,
+                                    ),
                               ),
                             ],
                           ),
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.white,
-                          ),
-                          label: const Text('Add to Cart'),
-                          icon: const Icon(
-                            Icons.shopping_bag_outlined,
-                          ),
+                        BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+                          bloc: BlocProvider.of<ProductDetailsCubit>(context),
+                          buildWhen: (previous, current) =>
+                              current is ProductAddedToCart ||
+                              current is ProductAddingToCart,
+                          builder: (context, state) {
+                            if (state is ProductAddingToCart) {
+                              return ElevatedButton(
+                                onPressed: null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: AppColors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    width: 28,
+                                    height: 28,
+                                    child:
+                                        const CircularProgressIndicator.adaptive(),
+                                  ),
+                                ),
+                              );
+                            } else if (state is ProductAddedToCart) {
+                              return ElevatedButton(
+                                onPressed: null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: AppColors.white,
+                                ),
+                                child: const Text(
+                                  'Added Successfully!',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              );
+                            }
+                            return ElevatedButton.icon(
+                              onPressed: () =>
+                                  BlocProvider.of<ProductDetailsCubit>(
+                                    context,
+                                  ).addToCart(product.id),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: AppColors.white,
+                              ),
+                              label: const Text(
+                                'Add to Cart',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              icon: const Icon(Icons.shopping_bag_outlined),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -301,9 +548,9 @@ class ProductDetailsPage extends StatelessWidget {
             ),
           );
         } else {
-        return const Scaffold(
-        body: Center(child: Text('Something went wrong!')),
-        );
+          return const Scaffold(
+            body: Center(child: Text('Something went wrong!')),
+          );
         }
       },
     );
