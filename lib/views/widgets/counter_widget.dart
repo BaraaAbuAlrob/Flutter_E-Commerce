@@ -15,41 +15,41 @@ class CounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.greyWithShade300,
-        borderRadius: BorderRadius.circular(24.0),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => cubit.decrementCounter(productId),
-            icon: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 6),
-                  child: Icon(
-                    Icons.minimize_rounded,
-                    color: value > 1
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey[400],
-                  ),
-                ),
-              ],
+    return SizedBox(
+      height: 44.0,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.greyWithShade300,
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () => cubit.decrementCounter(productId),
+              icon: Icon(
+                Icons.remove_rounded,
+                color: value > 1
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey[400],
+                size: 18,
+              ),
             ),
-          ),
-          const SizedBox(width: 16.0),
-          Text(
-            value.toString(),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(width: 16.0),
-          IconButton(
-            onPressed: () => cubit.incrementCounter(productId),
-            icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-          ),
-        ],
+            const SizedBox(width: 4.0),
+            Text(
+              value.toString(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(width: 4.0),
+            IconButton(
+              onPressed: () => cubit.incrementCounter(productId),
+              icon: Icon(
+                Icons.add_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 18,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
