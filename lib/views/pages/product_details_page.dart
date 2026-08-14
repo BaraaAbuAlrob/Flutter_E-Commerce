@@ -267,7 +267,7 @@ class ProductDetailsPage extends StatelessWidget {
                         left: 36.0,
                         right: 36.0,
                         top: 36.0,
-                        bottom: 90.0,
+                        bottom: 100.0,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,14 +445,14 @@ class ProductDetailsPage extends StatelessWidget {
                   bottom: 0,
                   child: Container(
                     width: double.infinity,
-                    height: 100,
+                    height: 80,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 36.0,
                       vertical: 16.0,
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24.0),
+                        top: Radius.circular(36.0),
                       ),
                       color: AppColors.white,
                       boxShadow: [
