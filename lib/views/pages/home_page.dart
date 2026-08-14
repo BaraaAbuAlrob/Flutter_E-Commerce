@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
@@ -44,8 +43,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       children: [
                         const CircleAvatar(
                           radius: 25,
-                          backgroundImage: CachedNetworkImageProvider(
-                            'https://res.cloudinary.com/dbahe7lxz/image/upload/v1785859558/idraaak/qqyxqerw3sc7esxsmeqb.jpg',
+                          backgroundImage: AssetImage(
+                            'assets/images/home_images/mommy.jpg',
                           ),
                         ),
                         const SizedBox(width: 16.0),
@@ -53,7 +52,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Baraa AbuAlrob',
+                              'Baraa Ahmad AbuAlrob',
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             Text(

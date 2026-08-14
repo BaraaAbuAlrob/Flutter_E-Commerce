@@ -19,7 +19,7 @@ class ProductItem extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
-                color: AppColors.greyWithShade300,
+                color: AppColors.grey300,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
