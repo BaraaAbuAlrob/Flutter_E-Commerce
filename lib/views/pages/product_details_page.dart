@@ -240,9 +240,7 @@ class ProductDetailsPage extends StatelessWidget {
                   right: 0,
                   height: size.height * 0.52,
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.grey300,
-                    ),
+                    decoration: BoxDecoration(color: AppColors.grey300),
                     child: Column(
                       children: [
                         SizedBox(height: size.height * 0.1),
@@ -446,6 +444,8 @@ class ProductDetailsPage extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: Container(
+                    width: double.infinity,
+                    height: 100,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 36.0,
                       vertical: 16.0,
@@ -473,12 +473,16 @@ class ProductDetailsPage extends StatelessWidget {
                                 .copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
+                                  fontSize: 24,
                                 ),
                             children: [
                               TextSpan(
                                 text: product.price.toString(),
                                 style: Theme.of(context).textTheme.titleLarge!
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 36,
+                                    ),
                               ),
                             ],
                           ),
@@ -496,8 +500,15 @@ class ProductDetailsPage extends StatelessWidget {
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: AppColors.white,
                                 ),
-                                child:
-                                    const CircularProgressIndicator.adaptive(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    width: 28,
+                                    height: 28,
+                                    child:
+                                        const CircularProgressIndicator.adaptive(),
+                                  ),
+                                ),
                               );
                             } else if (state is ProductAddedToCart) {
                               return ElevatedButton(
@@ -506,7 +517,10 @@ class ProductDetailsPage extends StatelessWidget {
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: AppColors.white,
                                 ),
-                                child: const Text('Added Successfully!'),
+                                child: const Text(
+                                  'Added Successfully!',
+                                  style: TextStyle(fontSize: 20),
+                                ),
                               );
                             }
                             return ElevatedButton.icon(
@@ -518,7 +532,10 @@ class ProductDetailsPage extends StatelessWidget {
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: AppColors.white,
                               ),
-                              label: const Text('Added to Cart!'),
+                              label: const Text(
+                                'Add to Cart',
+                                style: TextStyle(fontSize: 20),
+                              ),
                               icon: const Icon(Icons.shopping_bag_outlined),
                             );
                           },
