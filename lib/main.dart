@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/utils/app_router.dart';
 
 void main() {
@@ -15,7 +16,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'E-commerce App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          surface: AppColors.white,
+        ),
+        scaffoldBackgroundColor: AppColors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: AppColors.transparent,
+          elevation: 0,
+        ),
         useMaterial3: true,
       ),
       onGenerateRoute: AppRouter.onGenerateRoutes,

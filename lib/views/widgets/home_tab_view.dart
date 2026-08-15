@@ -12,8 +12,12 @@ class HomeTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocBuilder<HomeCubit, HomeCubitState>(
       bloc: BlocProvider.of<HomeCubit>(context),
+      buildWhen: (previous, current) =>
+          current is HomeLoading ||
+          current is HomeLoaded ||
+          current is HomeError,
       builder: (BuildContext context, state) {
         if (state is HomeLoading) {
           return const Center(child: CircularProgressIndicator.adaptive());
@@ -102,7 +106,7 @@ class HomeTabView extends StatelessWidget {
         } else if (state is HomeError) {
           return Center(child: Text(state.message));
         } else {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
       },
     );
