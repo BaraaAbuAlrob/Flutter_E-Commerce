@@ -1,0 +1,172 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/models/add_to_cart_model.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
+
+class CartItemWidget extends StatelessWidget {
+  final AddToCartModel cartItem;
+
+  const CartItemWidget({super.key, required this.cartItem});
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<CartCubit>(context);
+    final colorObj = AppColors.getColorByName(cartItem.color.name);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: AppColors.grey200, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // صورة المنتج في حاوية أنيقة
+          Container(
+            width: 100,
+            height: 100,
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: AppColors.grey100,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: cartItem.product.imgUrl,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.image_not_supported_outlined,
+                color: AppColors.grey,
+              ),
+            ),
+          ),
+          const SizedBox(width: 14.0),
+
+          // تفاصيل المنتج
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // اسم المنتج
+                Text(
+                  cartItem.product.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 6.0),
+
+                // الحجم (Size) واللون (Color) المختار
+                Wrap(
+                  spacing: 12.0,
+                  runSpacing: 4.0,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // Size
+                    Text.rich(
+                      TextSpan(
+                        text: 'Size: ',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.grey500,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: cartItem.size.name.toUpperCase(),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.black87,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Color
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            text: 'Color: ',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.grey500),
+                            children: [
+                              TextSpan(
+                                text: cartItem.color.name,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.black87,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (colorObj != null) ...[
+                          const SizedBox(width: 6.0),
+                          Container(
+                            width: 14,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: colorObj,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.grey300,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12.0),
+
+                // عداد الكمية والسعر
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CounterWidget(
+                      value: cartItem.quantity,
+                      productId: cartItem.id,
+                      cubit: cubit,
+                    ),
+                    Text(
+                      '\$${cartItem.product.price}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
