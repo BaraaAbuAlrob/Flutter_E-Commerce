@@ -22,10 +22,14 @@ class CartCubit extends Cubit<CartState> {
 
   void decrementCounter(String id) {
     final index = dummyCart.indexWhere((item) => item.id == id);
-    if (index != -1 && dummyCart[index].quantity > 1) {
-      dummyCart[index] = dummyCart[index].copyWith(
-        quantity: dummyCart[index].quantity - 1,
-      );
+    if (index != -1) {
+      if (dummyCart[index].quantity > 1) {
+        dummyCart[index] = dummyCart[index].copyWith(
+          quantity: dummyCart[index].quantity - 1,
+        );
+      } else {
+        dummyCart.removeAt(index);
+      }
       emit(CartLoaded(List.from(dummyCart)));
     }
   }

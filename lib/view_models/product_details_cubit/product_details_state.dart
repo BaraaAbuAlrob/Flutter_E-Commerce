@@ -1,45 +1,53 @@
 part of 'product_details_cubit.dart';
 
-sealed class ProductDetailsState {}
+sealed class ProductDetailsState {
+  const ProductDetailsState();
+}
 
-final class ProductDetailsInitial extends ProductDetailsState {}
+final class ProductDetailsInitial extends ProductDetailsState {
+  const ProductDetailsInitial();
+}
 
-final class ProductDetailsLoading extends ProductDetailsState {}
+final class ProductDetailsLoading extends ProductDetailsState {
+  const ProductDetailsLoading();
+}
 
 final class ProductDetailsLoaded extends ProductDetailsState {
   final ProductItemModel product;
 
-  ProductDetailsLoaded({required this.product});
+  const ProductDetailsLoaded({required this.product});
 }
 
 final class QuantityCounterLoaded extends ProductDetailsState {
   final int value;
 
-  QuantityCounterLoaded({required this.value});
+  const QuantityCounterLoaded({required this.value});
 }
 
 final class SizeSelected extends ProductDetailsState {
   final ProductSize size;
 
-  SizeSelected({required this.size});
+  const SizeSelected({required this.size});
 }
 
 final class ColorSelected extends ProductDetailsState {
   final ProductColor color;
 
-  ColorSelected({required this.color});
+  const ColorSelected({required this.color});
 }
 
-final class ProductAddingToCart extends ProductDetailsState {}
+final class ProductAddingToCart extends ProductDetailsState {
+  const ProductAddingToCart();
+}
 
 final class ProductAddedToCart extends ProductDetailsState {
   final String productId;
 
-  ProductAddedToCart({required this.productId});
+  const ProductAddedToCart({required this.productId});
 }
 
 final class ProductDetailsError extends ProductDetailsState {
   final String message;
 
-  ProductDetailsError({required this.message});
+  const ProductDetailsError({required this.message});
 }

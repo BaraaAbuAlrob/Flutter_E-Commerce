@@ -162,7 +162,7 @@ class ProductDetailsPage extends StatelessWidget {
                 ? primaryColor
                 : (color.name == 'white'
                       ? AppColors.grey300
-                      : Colors.transparent),
+                      : AppColors.transparent),
             width: isSelected ? 2.5 : 1.5,
           ),
           boxShadow: isSelected
@@ -222,7 +222,7 @@ class ProductDetailsPage extends StatelessWidget {
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: AppColors.transparent,
               elevation: 0,
               title: const Text('Product Details'),
               actions: [
@@ -458,7 +458,7 @@ class ProductDetailsPage extends StatelessWidget {
                       color: AppColors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.07),
+                          color: AppColors.shadowMedium,
                           blurRadius: 10,
                           offset: const Offset(0, -4),
                         ),

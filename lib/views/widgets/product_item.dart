@@ -42,7 +42,7 @@ class ProductItem extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.50),
+                  color: AppColors.whiteWithOpacity(0.50),
                 ),
                 child: IconButton(
                   onPressed: () {},

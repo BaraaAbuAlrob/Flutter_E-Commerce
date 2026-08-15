@@ -30,7 +30,7 @@ class CounterWidget extends StatelessWidget {
                 Icons.remove_rounded,
                 color: value > 1
                     ? Theme.of(context).primaryColor
-                    : Colors.grey[400],
+                    : AppColors.grey400,
                 size: 18,
               ),
             ),
