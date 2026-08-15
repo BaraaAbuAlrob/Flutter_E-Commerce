@@ -18,7 +18,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     );
     selectedSize = product.size;
     selectedColor = product.color;
-    quantity = product.quantity;
+    quantity = 1;
     emit(ProductDetailsLoading());
     try {
       await Future.delayed(
@@ -31,27 +31,13 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   }
 
   void incrementCounter(String productId) {
-    final selectedIndex = dummyProducts.indexWhere(
-      (item) => item.id == productId,
-    );
-    if (selectedIndex != -1) {
-      dummyProducts[selectedIndex] = dummyProducts[selectedIndex].copyWith(
-        quantity: dummyProducts[selectedIndex].quantity + 1,
-      );
-      quantity = dummyProducts[selectedIndex].quantity;
-      emit(QuantityCounterLoaded(value: quantity));
-    }
+    quantity++;
+    emit(QuantityCounterLoaded(value: quantity));
   }
 
   void decrementCounter(String productId) {
-    final selectedIndex = dummyProducts.indexWhere(
-      (item) => item.id == productId,
-    );
-    if (selectedIndex != -1 && dummyProducts[selectedIndex].quantity > 1) {
-      dummyProducts[selectedIndex] = dummyProducts[selectedIndex].copyWith(
-        quantity: dummyProducts[selectedIndex].quantity - 1,
-      );
-      quantity = dummyProducts[selectedIndex].quantity;
+    if (quantity > 1) {
+      quantity--;
       emit(QuantityCounterLoaded(value: quantity));
     }
   }
@@ -69,13 +55,29 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   void addToCart(String productId) {
     emit(ProductAddingToCart());
     try {
-      final cartItem = AddToCartModel(
-        productId: productId,
-        size: selectedSize,
-        color: selectedColor,
-        quantity: quantity,
+      final product = dummyProducts.firstWhere((item) => item.id == productId);
+      final existingIndex = dummyCart.indexWhere(
+        (item) =>
+            item.product.id == productId &&
+            item.size == selectedSize &&
+            item.color == selectedColor,
       );
-      dummyCart.add(cartItem);
+
+      if (existingIndex != -1) {
+        dummyCart[existingIndex] = dummyCart[existingIndex].copyWith(
+          quantity: dummyCart[existingIndex].quantity + quantity,
+        );
+      } else {
+        final cartItem = AddToCartModel(
+          id: DateTime.now().toIso8601String(),
+          product: product,
+          size: selectedSize,
+          color: selectedColor,
+          quantity: quantity,
+        );
+        dummyCart.add(cartItem);
+      }
+
       Future.delayed(
         const Duration(seconds: 1),
         () {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:flutter_ecommerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:flutter_ecommerce_app/views/pages/cart_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/favorites_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/home_page.dart';
@@ -39,7 +42,14 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
       tabs: [
         // 1. الصفحة الرئيسية - Home
         PersistentTabConfig(
-          screen: const HomePage(),
+          screen: BlocProvider(
+            create: (context) {
+              final cubit = HomeCubit();
+              cubit.getHomeData();
+              return cubit;
+            },
+            child: const HomePage(),
+          ),
           item: ItemConfig(
             icon: const Icon(Icons.home),
             inactiveIcon: const Icon(Icons.home_outlined),
@@ -49,25 +59,32 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           ),
         ),
 
-        // 2. المفضلة - Favorites
+        // 2. السلة - Cart
+        PersistentTabConfig(
+          screen: BlocProvider(
+            create: (context) {
+              final cubit = CartCubit();
+              cubit.getCartItems();
+              return cubit;
+            },
+            child: const CartPage(),
+          ),
+          item: ItemConfig(
+            icon: const Icon(Icons.shopping_cart),
+            inactiveIcon: const Icon(Icons.shopping_cart_outlined),
+            title: "Cart",
+            activeForegroundColor: primaryColor,
+            inactiveForegroundColor: inactiveColor,
+          ),
+        ),
+
+        // 3. المفضلة - Favorites
         PersistentTabConfig(
           screen: const FavoritesPage(),
           item: ItemConfig(
             icon: const Icon(Icons.favorite),
             inactiveIcon: const Icon(Icons.favorite_border),
             title: "Favorites",
-            activeForegroundColor: primaryColor,
-            inactiveForegroundColor: inactiveColor,
-          ),
-        ),
-
-        // 3. السلة - Cart
-        PersistentTabConfig(
-          screen: const CartPage(),
-          item: ItemConfig(
-            icon: const Icon(Icons.shopping_cart),
-            inactiveIcon: const Icon(Icons.shopping_cart_outlined),
-            title: "Cart",
             activeForegroundColor: primaryColor,
             inactiveForegroundColor: inactiveColor,
           ),

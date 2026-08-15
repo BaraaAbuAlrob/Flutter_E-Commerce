@@ -11,7 +11,6 @@ class ProductItemModel {
   final bool isFavorite;
   final String category;
   final String averageRate;
-  final int quantity;
   final ProductColor color;
   final ProductSize size;
 
@@ -25,7 +24,6 @@ class ProductItemModel {
     this.isFavorite = false,
     this.category = 'Others',
     this.averageRate = '0.0',
-    this.quantity = 1,
     this.color = ProductColor.nc,
     this.size = ProductSize.ns,
   });
@@ -39,7 +37,6 @@ class ProductItemModel {
     bool? isFavorite,
     String? category,
     String? averageRate,
-    int? quantity,
     ProductColor? color,
     ProductSize? size,
   }) {
@@ -52,7 +49,6 @@ class ProductItemModel {
       isFavorite: isFavorite ?? this.isFavorite,
       category: category ?? this.category,
       averageRate: averageRate ?? this.averageRate,
-      quantity: quantity ?? this.quantity,
       color: color ?? this.color,
       size: size ?? this.size,
     );

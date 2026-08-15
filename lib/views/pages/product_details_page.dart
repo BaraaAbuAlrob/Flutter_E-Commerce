@@ -325,13 +325,14 @@ class ProductDetailsPage extends StatelessWidget {
                                           ),
                                     );
                                   } else if (state is ProductDetailsLoaded) {
+                                    final cubit =
+                                        BlocProvider.of<ProductDetailsCubit>(
+                                          context,
+                                        );
                                     return CounterWidget(
-                                      value: state.product.quantity,
+                                      value: cubit.quantity,
                                       productId: product.id,
-                                      cubit:
-                                          BlocProvider.of<ProductDetailsCubit>(
-                                            context,
-                                          ),
+                                      cubit: cubit,
                                     );
                                   } else {
                                     return const SizedBox.shrink();
