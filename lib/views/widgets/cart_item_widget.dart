@@ -9,20 +9,29 @@ import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
 class CartItemWidget extends StatelessWidget {
   final AddToCartModel cartItem;
   final bool showCheckbox;
+  final bool showCounter;
+  final VoidCallback? onTap;
+  final EdgeInsetsGeometry? margin;
 
   const CartItemWidget({
     super.key,
     required this.cartItem,
     this.showCheckbox = false,
+    this.showCounter = true,
+    this.onTap,
+    this.margin,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<CartCubit>(context);
+    final cubit = (showCounter || showCheckbox)
+        ? BlocProvider.of<CartCubit>(context)
+        : null;
     final colorObj = AppColors.getColorByName(cartItem.color.name);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      margin: margin ??
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16.0),
@@ -40,7 +49,10 @@ class CartItemWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(16.0),
-          onTap: () => cubit.toggleItemSelection(cartItem.id),
+          onTap: onTap ??
+              (cubit != null
+                  ? () => cubit.toggleItemSelection(cartItem.id)
+                  : null),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
@@ -116,10 +128,8 @@ class CartItemWidget extends StatelessWidget {
                       const SizedBox(height: 4.0),
 
                       // الحجم (Size) واللون (Color) المختار
-                      Wrap(
-                        spacing: 12.0,
-                        runSpacing: 4.0,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Size
                           Text.rich(
@@ -139,6 +149,7 @@ class CartItemWidget extends StatelessWidget {
                               ],
                             ),
                           ),
+                          const SizedBox(height: 4.0),
 
                           // Color
                           Row(
@@ -188,11 +199,14 @@ class CartItemWidget extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CounterWidget(
-                            value: cartItem.quantity,
-                            productId: cartItem.id,
-                            cubit: cubit,
-                          ),
+                          if (showCounter && cubit != null)
+                            CounterWidget(
+                              value: cartItem.quantity,
+                              productId: cartItem.id,
+                              cubit: cubit,
+                            )
+                          else
+                            const SizedBox.shrink(),
                           Text(
                             '\$${cartItem.totalPrice.toStringAsFixed(2)}',
                             style: Theme.of(context).textTheme.titleLarge
