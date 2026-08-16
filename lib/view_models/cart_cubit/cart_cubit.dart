@@ -7,7 +7,19 @@ class CartCubit extends Cubit<CartState> {
   CartCubit() : super(CartInitial());
 
   void getCartItems() {
-    emit(CartLoaded(List.from(dummyCart)));
+    final subtotal = dummyCart.where((item) => item.isSelected).fold<double>(
+        0, (previousValue, item) => previousValue + item.totalPrice);
+    emit(CartLoaded(List.from(dummyCart), subtotal));
+  }
+
+  void toggleItemSelection(String id) {
+    final index = dummyCart.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      dummyCart[index] = dummyCart[index].copyWith(
+        isSelected: !dummyCart[index].isSelected,
+      );
+      getCartItems();
+    }
   }
 
   void incrementCounter(String id) {
@@ -16,7 +28,7 @@ class CartCubit extends Cubit<CartState> {
       dummyCart[index] = dummyCart[index].copyWith(
         quantity: dummyCart[index].quantity + 1,
       );
-      emit(CartLoaded(List.from(dummyCart)));
+      getCartItems();
     }
   }
 
@@ -30,7 +42,7 @@ class CartCubit extends Cubit<CartState> {
       } else {
         dummyCart.removeAt(index);
       }
-      emit(CartLoaded(List.from(dummyCart)));
+      getCartItems();
     }
   }
 }

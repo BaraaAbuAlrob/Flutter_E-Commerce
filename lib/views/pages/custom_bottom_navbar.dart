@@ -34,6 +34,8 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   }
 
   PreferredSizeWidget? _buildAppBar(BuildContext context, int index) {
+    if (index == 1) return null;
+
     List<Widget> actions;
     switch (index) {
       case 0:
@@ -45,14 +47,6 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.notifications_none_rounded),
-          ),
-        ];
-        break;
-      case 1:
-        actions = [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete_outline_rounded),
           ),
         ];
         break;
@@ -125,7 +119,11 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                     cubit.getCartItems();
                     return cubit;
                   },
-                  child: const CartPage(),
+                  child: CartPage(
+                    onBackToHome: () {
+                      _controller.jumpToTab(0);
+                    },
+                  ),
                 ),
                 item: ItemConfig(
                   icon: const Icon(Icons.shopping_cart),
