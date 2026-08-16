@@ -19,7 +19,7 @@ class CounterWidget extends StatelessWidget {
       height: 44.0,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.grey300,
+          color: AppColors.grey100,
           borderRadius: BorderRadius.circular(24.0),
         ),
         child: Row(
