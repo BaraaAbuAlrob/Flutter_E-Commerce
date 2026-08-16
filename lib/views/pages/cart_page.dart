@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_ecommerce_app/models/add_to_cart_model.dart';
+import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/empty_state_widget.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  final VoidCallback? onBackToHome;
+
+  const CartPage({super.key, this.onBackToHome});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
+  bool isCheckoutVisible = false;
+
+  void _handleBack(BuildContext context) {
+    if (widget.onBackToHome != null) {
+      widget.onBackToHome!();
+    } else if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.homePage);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -44,42 +61,297 @@ class _CartPageState extends State<CartPage> {
       });
     }
 
-    return BlocBuilder<CartCubit, CartState>(
-      bloc: cubit,
-      buildWhen: (previous, current) =>
-          current is CartLoading ||
-          current is CartLoaded ||
-          current is CartError,
-      builder: (context, state) {
-        if (state is CartLoading) {
-          return const Center(child: CircularProgressIndicator.adaptive());
-        } else if (state is CartLoaded) {
-          final cartItems = state.cartItems;
-          if (cartItems.isEmpty) {
-            return const EmptyStateWidget(
-              icon: Icons.shopping_cart_outlined,
-              title: 'Your cart is empty!',
-              subtitle: 'Explore products and add them to your cart.',
-            );
-          }
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final cartItem = cartItems[index];
-                return CartItemWidget(cartItem: cartItem);
-              },
-            ),
-          );
-        } else if (state is CartError) {
-          return Center(child: Text(state.message));
-        } else {
-          return const Center(child: Text('Something went wrong!'));
-        }
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleBack(context);
       },
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // شريط العنوان العلوي (App Bar) المطابق للتصميم بالضبط
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // أيقونة الرجوع على اليسار (<) للانتقال للرئيسية
+                    IconButton(
+                      onPressed: () => _handleBack(context),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: AppColors.black87,
+                        size: 20,
+                      ),
+                    ),
+
+                  // عنوان الصفحة في المنتصف
+                  Text(
+                    'My Cart',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.black87,
+                        ),
+                  ),
+
+                  // أيقونة الحقيبة على اليمين للتحكم في ظهور الـ Checkout والـ Checkboxes
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isCheckoutVisible = !isCheckoutVisible;
+                      });
+                    },
+                    icon: Icon(
+                      isCheckoutVisible
+                          ? Icons.shopping_bag
+                          : Icons.shopping_bag_outlined,
+                      color: isCheckoutVisible
+                          ? Theme.of(context).primaryColor
+                          : AppColors.black87,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: BlocBuilder<CartCubit, CartState>(
+                bloc: cubit,
+                buildWhen: (previous, current) =>
+                    current is CartLoading ||
+                    current is CartLoaded ||
+                    current is CartError,
+                builder: (context, state) {
+                  if (state is CartLoading) {
+                    return const Center(
+                        child: CircularProgressIndicator.adaptive());
+                  } else if (state is CartLoaded) {
+                    final cartItems = state.cartItems;
+                    if (cartItems.isEmpty) {
+                      return const EmptyStateWidget(
+                        icon: Icons.shopping_cart_outlined,
+                        title: 'Your cart is empty!',
+                        subtitle: 'Explore products and add them to your cart.',
+                      );
+                    }
+                    final double shipping = state.subtotal > 0 ? 10.0 : 0.0;
+                    final double totalAmount = state.subtotal + shipping;
+
+                    return Column(
+                      children: [
+                        // قائمة المنتجات في السلة
+                        Expanded(
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            itemCount: cartItems.length,
+                            itemBuilder: (context, index) {
+                              final cartItem = cartItems[index];
+                              return CartItemWidget(
+                                cartItem: cartItem,
+                                showCheckbox: isCheckoutVisible,
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                color: AppColors.grey200,
+                                height: 1,
+                                indent: 16,
+                                endIndent: 16,
+                              );
+                            },
+                          ),
+                        ),
+
+                        // قسم الـ Checkout يظهر فقط عند الضغط على أيقونة الـ Bag
+                        if (isCheckoutVisible)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(28.0),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.shadowStrong,
+                                  blurRadius: 20,
+                                  offset: const Offset(0, -4),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.only(
+                              left: 20.0,
+                              right: 20.0,
+                              top: 12.0,
+                              bottom: 20.0,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Pill handle indicator
+                                Container(
+                                  width: 40,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey300,
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                ),
+                                const SizedBox(height: 16.0),
+
+                                // حقل ادخال الـ Promo Code
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 12.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey100,
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.stars_outlined,
+                                        color: AppColors.grey500,
+                                        size: 22,
+                                      ),
+                                      const SizedBox(width: 12.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Enter your promo code',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors.grey500,
+                                              ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: AppColors.grey500,
+                                        size: 22,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16.0),
+
+                                // Subtotal
+                                totalAndSubtotalWidget(
+                                  context,
+                                  title: 'Subtotal',
+                                  amount: state.subtotal,
+                                ),
+
+                                // Shipping
+                                totalAndSubtotalWidget(
+                                  context,
+                                  title: 'Shipping',
+                                  amount: shipping,
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                // Dash separator
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return Dash(
+                                      dashColor: AppColors.grey200,
+                                      length: constraints.maxWidth,
+                                      dashGap: 6,
+                                      dashLength: 6,
+                                      dashThickness: 1.5,
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                // Total Amount
+                                totalAndSubtotalWidget(
+                                  context,
+                                  title: 'Total amount',
+                                  amount: totalAmount,
+                                  isTotal: true,
+                                ),
+                                const SizedBox(height: 20.0),
+
+                                // Checkout Button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 56,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      foregroundColor: AppColors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Checkout',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    );
+                  } else if (state is CartError) {
+                    return Center(child: Text(state.message));
+                  } else {
+                    return const Center(child: Text('Something went wrong!'));
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+  Widget totalAndSubtotalWidget(
+    BuildContext context, {
+    required String title,
+    required double amount,
+    bool isTotal = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: isTotal ? AppColors.black87 : AppColors.grey500,
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                ),
+          ),
+          Text(
+            '\$${amount.toStringAsFixed(2)}',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black87,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

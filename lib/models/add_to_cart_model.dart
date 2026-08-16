@@ -6,6 +6,7 @@ class AddToCartModel {
   final ProductSize size;
   final ProductColor color;
   final int quantity;
+  final bool isSelected;
 
   AddToCartModel({
     required this.id,
@@ -13,7 +14,10 @@ class AddToCartModel {
     required this.size,
     required this.color,
     required this.quantity,
+    this.isSelected = false,
   });
+
+  double get totalPrice => product.price * quantity;
 
   AddToCartModel copyWith({
     String? id,
@@ -21,6 +25,7 @@ class AddToCartModel {
     ProductSize? size,
     ProductColor? color,
     int? quantity,
+    bool? isSelected,
   }) {
     return AddToCartModel(
       id: id ?? this.id,
@@ -28,6 +33,7 @@ class AddToCartModel {
       size: size ?? this.size,
       color: color ?? this.color,
       quantity: quantity ?? this.quantity,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 }
