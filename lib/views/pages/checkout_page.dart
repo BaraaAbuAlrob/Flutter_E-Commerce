@@ -4,6 +4,7 @@ import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/view_models/checkout_cubit/checkout_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/checkout_headlines_item.dart';
+import 'package:flutter_ecommerce_app/views/widgets/empty_shipping_payment.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
@@ -18,27 +19,27 @@ class CheckoutPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Checkout')),
-        body: SafeArea(
-          child: Builder(
-            builder: (context) {
-              final cubit = BlocProvider.of<CheckoutCubit>(context);
+        body: Builder(
+          builder: (context) {
+            final cubit = BlocProvider.of<CheckoutCubit>(context);
 
-              return BlocBuilder<CheckoutCubit, CheckoutState>(
-                bloc: cubit,
-                buildWhen: (previous, current) =>
-                    current is CheckoutLoaded ||
-                    current is CheckoutLoading ||
-                    current is CheckoutError,
-                builder: (context, state) {
-                  if (state is CheckoutLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
-                  } else if (state is CheckoutError) {
-                    return Center(child: Text(state.message));
-                  } else if (state is CheckoutLoaded) {
-                    final cartItems = state.checkoutItems;
-                    return SingleChildScrollView(
+            return BlocBuilder<CheckoutCubit, CheckoutState>(
+              bloc: cubit,
+              buildWhen: (previous, current) =>
+                  current is CheckoutLoaded ||
+                  current is CheckoutLoading ||
+                  current is CheckoutError,
+              builder: (context, state) {
+                if (state is CheckoutLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                } else if (state is CheckoutError) {
+                  return Center(child: Text(state.message));
+                } else if (state is CheckoutLoaded) {
+                  final cartItems = state.checkoutItems;
+                  return SafeArea(
+                    child: SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Column(
@@ -47,6 +48,11 @@ class CheckoutPage extends StatelessWidget {
                               title: 'Address',
                               onTap: () {},
                             ),
+                            const SizedBox(height: 16.0),
+                            const EmptyShippingAndPayment(
+                              title: 'Add shipping address',
+                            ),
+                            const SizedBox(height: 16.0),
                             CheckoutHeadlinesItem(
                               title: 'Products',
                               numOfProducts: state.numOfProducts,
@@ -67,7 +73,13 @@ class CheckoutPage extends StatelessWidget {
                                 );
                               },
                             ),
+                            const SizedBox(height: 16.0),
                             CheckoutHeadlinesItem(title: 'Payment'),
+                            const SizedBox(height: 16.0),
+                            const EmptyShippingAndPayment(
+                              title: 'Add Payment Method',
+                            ),
+                            const SizedBox(height: 16.0),
                             Divider(color: AppColors.grey200),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,14 +124,14 @@ class CheckoutPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    );
-                  } else {
-                    return const Center(child: Text('Something went wrong!'));
-                  }
-                },
-              );
-            },
-          ),
+                    ),
+                  );
+                } else {
+                  return const Center(child: Text('Something went wrong!'));
+                }
+              },
+            );
+          },
         ),
       ),
     );
