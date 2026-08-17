@@ -1,13 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/models/payment_card_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/utils/app_routes.dart';
+import 'package:flutter_ecommerce_app/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/checkout_cubit/checkout_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/checkout_headlines_item.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_bottom_sheet.dart';
 import 'package:flutter_ecommerce_app/views/widgets/empty_shipping_payment.dart';
+import 'package:flutter_ecommerce_app/views/widgets/payment_method_bottom_sheet.dart';
+import 'package:flutter_ecommerce_app/views/widgets/payment_method_item.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
+
+  Widget _buildPaymentMethodItem(
+    PaymentCardModel? chosenCard,
+    BuildContext context,
+  ) {
+    if (chosenCard != null) {
+      return PaymentMethodItem(
+        paymentCard: chosenCard,
+        onItemTapped: () async {
+          final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
+          final selected = await showCustomBottomSheet<PaymentCardModel>(
+            context: context,
+            title: 'Payment Methods',
+            subtitle: 'Select your preferred payment card',
+            child: BlocProvider(
+              create: (context) {
+                final cubit = PaymentMethodsCubit();
+                cubit.fetchPaymentMethods(chosenCard);
+                return cubit;
+              },
+              child: const PaymentMethodBottomSheet(),
+            ),
+          );
+          if (selected != null) {
+            checkoutCubit.changePaymentMethod(selected);
+          }
+        },
+      );
+    } else {
+      final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
+      return EmptyShippingAndPayment(
+        title: 'Add Payment Method',
+        onTab: () async {
+          final result = await Navigator.of(context)
+              .pushNamed(AppRoutes.addNewCardRoute);
+          if (result is PaymentCardModel) {
+            checkoutCubit.changePaymentMethod(result);
+          } else {
+            checkoutCubit.getCartItems();
+          }
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +99,9 @@ class CheckoutPage extends StatelessWidget {
                               onTap: () {},
                             ),
                             const SizedBox(height: 16.0),
-                            const EmptyShippingAndPayment(
+                            EmptyShippingAndPayment(
                               title: 'Add shipping address',
+                              onTab: () {},
                             ),
                             const SizedBox(height: 16.0),
                             CheckoutHeadlinesItem(
@@ -76,8 +127,9 @@ class CheckoutPage extends StatelessWidget {
                             const SizedBox(height: 16.0),
                             CheckoutHeadlinesItem(title: 'Payment'),
                             const SizedBox(height: 16.0),
-                            const EmptyShippingAndPayment(
-                              title: 'Add Payment Method',
+                            _buildPaymentMethodItem(
+                              state.chosenPaymentCard,
+                              context,
                             ),
                             const SizedBox(height: 16.0),
                             Divider(color: AppColors.grey200),

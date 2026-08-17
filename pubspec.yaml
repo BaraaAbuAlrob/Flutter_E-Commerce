@@ -31,6 +31,7 @@ flutter:
   assets:
    - assets/images/category_images/
    - assets/images/home_images/
+   - assets/images/payment_methods_images/
 
   # fonts:
   #   - family: Schuyler
