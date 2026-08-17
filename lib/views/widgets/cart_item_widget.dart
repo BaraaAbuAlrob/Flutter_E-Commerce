@@ -50,7 +50,7 @@ class CartItemWidget extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16.0),
           onTap: onTap ??
-              (cubit != null
+              ((showCheckbox && cubit != null)
                   ? () => cubit.toggleItemSelection(cartItem.id)
                   : null),
           child: Padding(

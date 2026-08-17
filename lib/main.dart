@@ -26,6 +26,12 @@ class MyApp extends StatelessWidget {
           surfaceTintColor: AppColors.transparent,
           elevation: 0,
         ),
+        actionIconTheme: ActionIconThemeData(
+          backButtonIconBuilder: (BuildContext context) => const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+          ),
+        ),
         useMaterial3: true,
       ),
       onGenerateRoute: AppRouter.onGenerateRoutes,
