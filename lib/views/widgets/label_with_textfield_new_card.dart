@@ -11,6 +11,8 @@ class LabelWithTextFieldNewCard extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   final int? maxLength;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
 
   const LabelWithTextFieldNewCard({
     super.key,
@@ -22,6 +24,8 @@ class LabelWithTextFieldNewCard extends StatefulWidget {
     this.inputFormatters,
     this.validator,
     this.maxLength,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -46,6 +50,8 @@ class _LabelWithTextFieldNewCardState
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: widget.onFieldSubmitted,
           inputFormatters: widget.inputFormatters,
           maxLength: widget.maxLength,
           validator: widget.validator ??
