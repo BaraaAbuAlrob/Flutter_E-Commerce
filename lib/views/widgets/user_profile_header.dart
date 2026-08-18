@@ -17,10 +17,7 @@ class UserProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 22,
-          backgroundImage: AssetImage(avatarPath),
-        ),
+        CircleAvatar(radius: 22, backgroundImage: AssetImage(avatarPath)),
         const SizedBox(width: 12.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,14 +26,16 @@ class UserProfileHeader extends StatelessWidget {
             Text(
               userName,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
             ),
             Text(
               subtitle,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.grey500,
-                  ),
+                color: AppColors.grey500,
+                fontSize: 12.0,
+              ),
             ),
           ],
         ),

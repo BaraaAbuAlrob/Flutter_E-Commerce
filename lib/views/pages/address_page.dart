@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/models/address_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/view_models/address_cubit/address_cubit.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_snack_bar.dart';
 import 'package:flutter_ecommerce_app/views/widgets/main_button.dart';
 import 'package:flutter_ecommerce_app/views/widgets/map_preview_painter.dart';
 
@@ -136,11 +138,8 @@ class _AddressPageState extends State<AddressPage> {
     final cubit = BlocProvider.of<AddressCubit>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Address',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+      appBar: CustomAppBar(
+        title: 'Address',
         actions: [
           IconButton(
             icon: const Icon(
@@ -160,31 +159,18 @@ class _AddressPageState extends State<AddressPage> {
             current is AddingAddressFailed,
         listener: (context, state) {
           if (state is AddressAdded) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
+            CustomSnackBar.showSuccess(
+              context,
+              message:
                   'Added location "${state.newAddress.city}" successfully!',
-                ),
-                backgroundColor: AppColors.green,
-                duration: const Duration(seconds: 2),
-              ),
+              duration: const Duration(seconds: 2),
             );
             _locationController.text =
                 '${state.newAddress.city}, ${state.newAddress.country}';
           } else if (state is AddingAddressFailed) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage),
-                backgroundColor: AppColors.red,
-              ),
-            );
+            CustomSnackBar.showError(context, message: state.errorMessage);
           } else if (state is FailureFetchingAddresses) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage),
-                backgroundColor: AppColors.red,
-              ),
-            );
+            CustomSnackBar.showError(context, message: state.errorMessage);
           }
         },
         builder: (context, state) {

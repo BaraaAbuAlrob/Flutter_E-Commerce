@@ -9,7 +9,9 @@ import 'package:flutter_ecommerce_app/view_models/checkout_cubit/checkout_cubit.
 import 'package:flutter_ecommerce_app/views/widgets/address_card_item.dart';
 import 'package:flutter_ecommerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/checkout_headlines_item.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
 import 'package:flutter_ecommerce_app/views/widgets/custom_bottom_sheet.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_snack_bar.dart';
 import 'package:flutter_ecommerce_app/views/widgets/empty_shipping_payment.dart';
 import 'package:flutter_ecommerce_app/views/widgets/payment_method_bottom_sheet.dart';
 import 'package:flutter_ecommerce_app/views/widgets/payment_method_item.dart';
@@ -103,12 +105,7 @@ class CheckoutPage extends StatelessWidget {
         return cubit;
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Checkout',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+        appBar: const CustomAppBar(title: 'Checkout'),
         body: Builder(
           builder: (context) {
             final cubit = BlocProvider.of<CheckoutCubit>(context);
@@ -159,6 +156,7 @@ class CheckoutPage extends StatelessWidget {
                                 return CartItemWidget(
                                   cartItem: cartItem,
                                   showCounter: false,
+                                  showDelete: false,
                                   margin: const EdgeInsets.symmetric(
                                     vertical: 6.0,
                                   ),
@@ -199,22 +197,16 @@ class CheckoutPage extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (state.chosenAddress == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
+                                    CustomSnackBar.showWarning(
+                                      context,
+                                      message:
                                           'Please select a shipping address first!',
-                                        ),
-                                      ),
                                     );
                                     return;
                                   }
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Order placed successfully!',
-                                      ),
-                                      backgroundColor: AppColors.green,
-                                    ),
+                                  CustomSnackBar.showSuccess(
+                                    context,
+                                    message: 'Order placed successfully!',
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(

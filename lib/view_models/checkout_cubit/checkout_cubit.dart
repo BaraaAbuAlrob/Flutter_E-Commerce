@@ -10,7 +10,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   void getCartItems() {
     emit(CheckoutLoading());
-    final checkoutItems = dummyCart.where((item) => item.isSelected).toList();
+    final checkoutItems = List<AddToCartModel>.from(dummyCart);
     final subtotal = checkoutItems.fold(
       0.0,
       (previousValue, element) =>

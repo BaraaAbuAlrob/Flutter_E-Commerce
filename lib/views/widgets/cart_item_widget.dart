@@ -5,12 +5,16 @@ import 'package:flutter_ecommerce_app/models/add_to_cart_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_confirm_dialog.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_snack_bar.dart';
 
 class CartItemWidget extends StatelessWidget {
   final AddToCartModel cartItem;
   final bool showCheckbox;
   final bool showCounter;
+  final bool showDelete;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
   final EdgeInsetsGeometry? margin;
 
   const CartItemWidget({
@@ -18,20 +22,22 @@ class CartItemWidget extends StatelessWidget {
     required this.cartItem,
     this.showCheckbox = false,
     this.showCounter = true,
+    this.showDelete = true,
     this.onTap,
+    this.onDelete,
     this.margin,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cubit = (showCounter || showCheckbox)
+    final cubit = (showCounter || showCheckbox || showDelete)
         ? BlocProvider.of<CartCubit>(context)
         : null;
     final colorObj = AppColors.getColorByName(cartItem.color.name);
 
     return Container(
-      margin: margin ??
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      margin:
+          margin ?? const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16.0),
@@ -49,7 +55,8 @@ class CartItemWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(16.0),
-          onTap: onTap ??
+          onTap:
+              onTap ??
               ((showCheckbox && cubit != null)
                   ? () => cubit.toggleItemSelection(cartItem.id)
                   : null),
@@ -117,13 +124,59 @@ class CartItemWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // اسم المنتج
-                      Text(
-                        cartItem.product.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                      // اسم المنتج وأيقونة الحذف في الزاوية
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              cartItem.product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          if (showDelete)
+                            InkWell(
+                              onTap:
+                                  onDelete ??
+                                  (cubit != null
+                                      ? () async {
+                                          final shouldDelete =
+                                              await CustomConfirmDialog.show(
+                                            context: context,
+                                            title: 'Remove Item?',
+                                            message:
+                                                'Are you sure you want to remove "${cartItem.product.name}" from your cart?',
+                                            confirmText: 'Remove',
+                                            cancelText: 'Cancel',
+                                          );
+                                          if (shouldDelete == true &&
+                                              context.mounted) {
+                                            cubit.deleteItem(cartItem.id);
+                                            CustomSnackBar.showInfo(
+                                              context,
+                                              message:
+                                                  '${cartItem.product.name} removed from cart',
+                                              duration:
+                                                  const Duration(seconds: 2),
+                                            );
+                                          }
+                                        }
+                                      : null),
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.delete_outline_rounded,
+                                  size: 20,
+                                  color: AppColors.grey500,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 4.0),
 
