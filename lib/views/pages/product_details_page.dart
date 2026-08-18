@@ -5,6 +5,7 @@ import 'package:flutter_ecommerce_app/models/product_item_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final String productId;
@@ -221,10 +222,9 @@ class ProductDetailsPage extends StatelessWidget {
           final product = state.product;
           return Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: AppBar(
+            appBar: CustomAppBar(
               backgroundColor: AppColors.transparent,
-              elevation: 0,
-              title: const Text('Product Details'),
+              title: 'Product Details',
               actions: [
                 IconButton(
                   icon: const Icon(Icons.favorite_border),

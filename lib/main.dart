@@ -25,10 +25,25 @@ class MyApp extends StatelessWidget {
           backgroundColor: AppColors.white,
           surfaceTintColor: AppColors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: false,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.black87,
+          ),
+          iconTheme: IconThemeData(color: AppColors.black87, size: 20),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
         ),
         actionIconTheme: ActionIconThemeData(
           backButtonIconBuilder: (BuildContext context) => const Icon(
             Icons.arrow_back_ios_new,
+            color: AppColors.black87,
             size: 20,
           ),
         ),

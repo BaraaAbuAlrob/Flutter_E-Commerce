@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool centerTitle;
   final Color? backgroundColor;
+  final double elevation;
 
   const CustomAppBar({
     super.key,
@@ -15,8 +16,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleWidget,
     this.leading,
     this.actions,
-    this.centerTitle = true,
+    this.centerTitle = false,
     this.backgroundColor,
+    this.elevation = 0,
   });
 
   @override
@@ -24,7 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor ?? AppColors.white,
       surfaceTintColor: AppColors.transparent,
-      elevation: 0,
+      elevation: elevation,
       scrolledUnderElevation: 0,
       centerTitle: centerTitle,
       leading: leading,
@@ -33,10 +35,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           (title != null
               ? Text(
                   title!,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.black87,
-                  ),
+                  style:
+                      Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black87,
+                      ) ??
+                      const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black87,
+                      ),
                 )
               : null),
       actions: actions,

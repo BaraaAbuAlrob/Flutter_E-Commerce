@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/utils/card_input_formatters.dart';
 import 'package:flutter_ecommerce_app/utils/card_validators.dart';
 import 'package:flutter_ecommerce_app/view_models/add_new_card_cubit/payment_methods_cubit.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
+import 'package:flutter_ecommerce_app/views/widgets/custom_snack_bar.dart';
 import 'package:flutter_ecommerce_app/views/widgets/label_with_textfield_new_card.dart';
 
 class AddNewCardPage extends StatefulWidget {
@@ -38,7 +40,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Add New Card')),
+      appBar: const CustomAppBar(title: 'Add New Card'),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -134,8 +136,9 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                     if (state is AddNewCardSuccess) {
                       Navigator.pop(context, state.newCard);
                     } else if (state is AddNewCardFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.errorMessage)),
+                      CustomSnackBar.showError(
+                        context,
+                        message: state.errorMessage,
                       );
                     }
                   },
