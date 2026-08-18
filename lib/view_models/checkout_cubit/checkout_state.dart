@@ -10,11 +10,13 @@ final class CheckoutLoaded extends CheckoutState {
   final List<AddToCartModel> checkoutItems;
   final double totalAmount;
   final int numOfProducts;
+  final PaymentCardModel? chosenPaymentCard;
 
   CheckoutLoaded({
     required this.checkoutItems,
     required this.totalAmount,
     required this.numOfProducts,
+    required this.chosenPaymentCard,
   });
 }
 
