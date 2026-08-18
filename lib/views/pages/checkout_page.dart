@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/models/address_model.dart';
 import 'package:flutter_ecommerce_app/models/payment_card_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/checkout_cubit/checkout_cubit.dart';
+import 'package:flutter_ecommerce_app/views/widgets/address_card_item.dart';
 import 'package:flutter_ecommerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/checkout_headlines_item.dart';
 import 'package:flutter_ecommerce_app/views/widgets/custom_bottom_sheet.dart';
@@ -15,15 +17,48 @@ import 'package:flutter_ecommerce_app/views/widgets/payment_method_item.dart';
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
 
+  Future<void> _navigateToAddress(
+    BuildContext context,
+    CheckoutCubit checkoutCubit,
+    AddressModel? currentAddress,
+  ) async {
+    final result = await Navigator.of(
+      context,
+    ).pushNamed(AppRoutes.addressRoute, arguments: currentAddress);
+    if (result is AddressModel) {
+      checkoutCubit.changeAddress(result);
+    }
+  }
+
+  Widget _buildAddressSection(
+    AddressModel? chosenAddress,
+    BuildContext context,
+  ) {
+    final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
+
+    if (chosenAddress != null) {
+      return AddressCardItem(
+        address: chosenAddress,
+        onTap: () => _navigateToAddress(context, checkoutCubit, chosenAddress),
+      );
+    } else {
+      return EmptyShippingAndPayment(
+        title: 'Add shipping address',
+        onTab: () => _navigateToAddress(context, checkoutCubit, null),
+      );
+    }
+  }
+
   Widget _buildPaymentMethodItem(
     PaymentCardModel? chosenCard,
     BuildContext context,
   ) {
+    final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
+
     if (chosenCard != null) {
       return PaymentMethodItem(
         paymentCard: chosenCard,
         onItemTapped: () async {
-          final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
           final selected = await showCustomBottomSheet<PaymentCardModel>(
             context: context,
             title: 'Payment Methods',
@@ -43,12 +78,12 @@ class CheckoutPage extends StatelessWidget {
         },
       );
     } else {
-      final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
       return EmptyShippingAndPayment(
         title: 'Add Payment Method',
         onTab: () async {
-          final result = await Navigator.of(context)
-              .pushNamed(AppRoutes.addNewCardRoute);
+          final result = await Navigator.of(
+            context,
+          ).pushNamed(AppRoutes.addNewCardRoute);
           if (result is PaymentCardModel) {
             checkoutCubit.changePaymentMethod(result);
           } else {
@@ -68,7 +103,12 @@ class CheckoutPage extends StatelessWidget {
         return cubit;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Checkout')),
+        appBar: AppBar(
+          title: const Text(
+            'Checkout',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
         body: Builder(
           builder: (context) {
             final cubit = BlocProvider.of<CheckoutCubit>(context);
@@ -96,13 +136,14 @@ class CheckoutPage extends StatelessWidget {
                           children: [
                             CheckoutHeadlinesItem(
                               title: 'Address',
-                              onTap: () {},
+                              onTap: () => _navigateToAddress(
+                                context,
+                                cubit,
+                                state.chosenAddress,
+                              ),
                             ),
                             const SizedBox(height: 16.0),
-                            EmptyShippingAndPayment(
-                              title: 'Add shipping address',
-                              onTab: () {},
-                            ),
+                            _buildAddressSection(state.chosenAddress, context),
                             const SizedBox(height: 16.0),
                             CheckoutHeadlinesItem(
                               title: 'Products',
@@ -156,7 +197,26 @@ class CheckoutPage extends StatelessWidget {
                               width: double.infinity,
                               height: 60,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (state.chosenAddress == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please select a shipping address first!',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Order placed successfully!',
+                                      ),
+                                      backgroundColor: AppColors.green,
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Theme.of(
                                     context,
