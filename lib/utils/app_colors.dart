@@ -19,6 +19,17 @@ class AppColors {
   static const Color blue = Colors.blue;
   static const Color primary = Colors.lightBlue;
 
+  // Auth Colors
+  static const Color authPrimary = Color(0xFF5046E5);
+  static const Color authPrimaryDark = Color(0xFF4338CA);
+  static const Color authPrimaryLight = Color(0xFFEEF2FF);
+  static const Color authInputBg = Color(0xFFF9FAFB);
+  static const Color authInputBorder = Color(0xFFF0F1F3);
+  static const Color authTextDark = Color(0xFF1F222A);
+  static const Color authTextSecondary = Color(0xFF8F959E);
+  static const Color authSuccess = Color(0xFF10B981);
+  static const Color authLink = Color(0xFF5046E5);
+
   // Shadow Colors
   static final Color shadowSubtle = Colors.black.withValues(alpha: 0.03);
   static final Color shadowMedium = Colors.black.withValues(alpha: 0.08);
