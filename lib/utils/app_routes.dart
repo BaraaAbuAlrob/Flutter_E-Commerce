@@ -7,4 +7,3 @@ class AppRoutes {
   static const String loginRoute = '/login_page';
   static const String registerRoute = '/register_page';
 }
-
