@@ -1,12 +1,40 @@
+import 'package:flutter_ecommerce_app/secrvices/auth_repository.dart';
 import 'package:flutter_ecommerce_app/view_models/register_cubit/register_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// A fake AuthRepository that doesn't touch Firebase.
+class FakeAuthRepository extends AuthRepository {
+  FakeAuthRepository() : super.forTesting();
+
+  @override
+  Future<void> signUpWithEmail({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    // Simulate success with a short delay.
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+  }
+
+  @override
+  Future<void> signInWithFacebook() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+  }
+}
 
 void main() {
   group('RegisterCubit Tests', () {
     late RegisterCubit cubit;
+    late FakeAuthRepository fakeAuthRepo;
 
     setUp(() {
-      cubit = RegisterCubit();
+      fakeAuthRepo = FakeAuthRepository();
+      cubit = RegisterCubit(authRepository: fakeAuthRepo);
     });
 
     tearDown(() {

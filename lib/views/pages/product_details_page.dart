@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/view_models/favorites_cubit/favorites_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
@@ -220,16 +221,38 @@ class ProductDetailsPage extends StatelessWidget {
           return Scaffold(body: Center(child: Text(state.message)));
         } else if (state is ProductDetailsLoaded) {
           final product = state.product;
+          FavoritesCubit? favCubit;
+          try {
+            favCubit = BlocProvider.of<FavoritesCubit>(context, listen: false);
+          } catch (_) {}
+
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: CustomAppBar(
               backgroundColor: AppColors.transparent,
               title: 'Product Details',
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
-                ),
+                if (favCubit != null)
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    bloc: favCubit,
+                    builder: (context, favState) {
+                      final isFav = favCubit!.isFavorite(product.id);
+                      return IconButton(
+                        icon: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav ? AppColors.red : AppColors.black87,
+                        ),
+                        onPressed: () {
+                          favCubit?.toggleFavorite(product);
+                        },
+                      );
+                    },
+                  )
+                else
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    onPressed: () {},
+                  ),
               ],
             ),
             body: Stack(

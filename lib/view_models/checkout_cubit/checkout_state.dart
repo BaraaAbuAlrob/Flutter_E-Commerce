@@ -38,6 +38,13 @@ final class CheckoutLoaded extends CheckoutState {
   }
 }
 
+final class CheckoutPlacingOrder extends CheckoutState {}
+
+final class OrderPlacedSuccess extends CheckoutState {
+  final String orderId;
+  OrderPlacedSuccess({required this.orderId});
+}
+
 final class CheckoutError extends CheckoutState {
   final String message;
 

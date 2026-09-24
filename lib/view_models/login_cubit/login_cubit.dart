@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/secrvices/auth_repository.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit() : super(LoginInitial());
+  final AuthRepository _authRepository;
+
+  LoginCubit({AuthRepository? authRepository})
+      : _authRepository = authRepository ?? AuthRepository.instance,
+        super(LoginInitial());
 
   // Strict email regex validator: checks username, @, domain/provider, and TLD
   static final RegExp _emailRegex = RegExp(
@@ -43,37 +48,46 @@ class LoginCubit extends Cubit<LoginState> {
     }
 
     emit(LoginLoading());
-    // Simulate authentication API call
-    await Future.delayed(const Duration(milliseconds: 1000));
-
-    emit(
-      LoginSuccess(
+    try {
+      await _authRepository.signInWithEmail(
         email: trimmedEmail,
-        message: 'Welcome back! Logged in successfully.',
-      ),
-    );
+        password: password,
+      );
+      emit(
+        LoginSuccess(
+          email: trimmedEmail,
+          message: 'Welcome back! Logged in successfully.',
+        ),
+      );
+    } on AuthException catch (e) {
+      emit(LoginFailure(e.message));
+    } catch (_) {
+      emit(LoginFailure('خطأ غير معروف أثناء تسجيل الدخول'));
+    }
   }
 
   Future<void> signInWithGoogle() async {
     emit(SocialLoginLoading('Google'));
-    await Future.delayed(const Duration(milliseconds: 900));
-    emit(
-      SocialLoginSuccess(
-        provider: 'Google',
-        message: 'Signed in with Google successfully!',
-      ),
-    );
+    try {
+      await _authRepository.signInWithGoogle();
+      emit(SocialLoginSuccess(provider: 'Google', message: 'Signed in with Google successfully!'));
+    } on AuthException catch (e) {
+      emit(SocialLoginFailure(provider: 'Google', errorMessage: e.message));
+    } catch (e) {
+      emit(SocialLoginFailure(provider: 'Google', errorMessage: 'خطأ غير معروف أثناء تسجيل الدخول عبر Google'));
+    }
   }
 
   Future<void> signInWithFacebook() async {
     emit(SocialLoginLoading('Facebook'));
-    await Future.delayed(const Duration(milliseconds: 900));
-    emit(
-      SocialLoginSuccess(
-        provider: 'Facebook',
-        message: 'Signed in with Facebook successfully!',
-      ),
-    );
+    try {
+      await _authRepository.signInWithFacebook();
+      emit(SocialLoginSuccess(provider: 'Facebook', message: 'Signed in with Facebook successfully!'));
+    } on AuthException catch (e) {
+      emit(SocialLoginFailure(provider: 'Facebook', errorMessage: e.message));
+    } catch (e) {
+      emit(SocialLoginFailure(provider: 'Facebook', errorMessage: 'خطأ غير معروف أثناء تسجيل الدخول عبر Facebook'));
+    }
   }
 
   Future<void> sendResetCode({

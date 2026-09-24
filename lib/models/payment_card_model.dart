@@ -29,28 +29,24 @@ class PaymentCardModel {
     if (clean.startsWith('3')) return 'American Express';
     return 'MasterCard';
   }
-}
 
-List<PaymentCardModel> dummyPaymentCards = [
-  PaymentCardModel(
-    id: '1',
-    cardNumber: '1234 5678 9012 3456',
-    cardHolderName: 'Baraa AbuAlrob',
-    expiryDate: '12/23',
-    cvv: '123',
-  ),
-  PaymentCardModel(
-    id: '2',
-    cardNumber: '1234 5678 9012 3456',
-    cardHolderName: 'John Doe',
-    expiryDate: '12/23',
-    cvv: '123',
-  ),
-  PaymentCardModel(
-    id: '3',
-    cardNumber: '1234 5678 9012 3456',
-    cardHolderName: 'Tim Smith',
-    expiryDate: '12/23',
-    cvv: '123',
-  ),
-];
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'cardNumber': cardNumber,
+      'cardHolderName': cardHolderName,
+      'expiryDate': expiryDate,
+      'cvv': cvv,
+    };
+  }
+
+  factory PaymentCardModel.fromMap(Map<dynamic, dynamic> map) {
+    return PaymentCardModel(
+      id: map['id']?.toString() ?? '',
+      cardNumber: map['cardNumber']?.toString() ?? '',
+      cardHolderName: map['cardHolderName']?.toString() ?? '',
+      expiryDate: map['expiryDate']?.toString() ?? '',
+      cvv: map['cvv']?.toString() ?? '',
+    );
+  }
+}
