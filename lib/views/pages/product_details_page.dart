@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/view_models/favorites_cubit/favorites_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:flutter_ecommerce_app/views/widgets/counter_widget.dart';
 import 'package:flutter_ecommerce_app/views/widgets/custom_app_bar.dart';
@@ -220,16 +221,38 @@ class ProductDetailsPage extends StatelessWidget {
           return Scaffold(body: Center(child: Text(state.message)));
         } else if (state is ProductDetailsLoaded) {
           final product = state.product;
+          FavoritesCubit? favCubit;
+          try {
+            favCubit = BlocProvider.of<FavoritesCubit>(context, listen: false);
+          } catch (_) {}
+
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: CustomAppBar(
               backgroundColor: AppColors.transparent,
               title: 'Product Details',
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
-                ),
+                if (favCubit != null)
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    bloc: favCubit,
+                    builder: (context, favState) {
+                      final isFav = favCubit!.isFavorite(product.id);
+                      return IconButton(
+                        icon: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav ? AppColors.red : AppColors.black87,
+                        ),
+                        onPressed: () {
+                          favCubit?.toggleFavorite(product);
+                        },
+                      );
+                    },
+                  )
+                else
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    onPressed: () {},
+                  ),
               ],
             ),
             body: Stack(
@@ -274,36 +297,40 @@ class ProductDetailsPage extends StatelessWidget {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: AppColors.yellow,
-                                        size: 25,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        product.averageRate.toString(),
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: AppColors.yellow,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          product.averageRate.toString(),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(width: 12),
                               BlocBuilder<
                                 ProductDetailsCubit,
                                 ProductDetailsState
@@ -347,34 +374,37 @@ class ProductDetailsPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
-                          BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
-                            bloc: BlocProvider.of<ProductDetailsCubit>(context),
-                            buildWhen: (previous, current) =>
-                                current is ProductDetailsLoaded ||
-                                current is SizeSelected,
-                            builder: (context, state) => Row(
-                              children: ProductSize.values
-                                  .map(
-                                    (size) => Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 6.0,
-                                        right: 8.0,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          BlocProvider.of<ProductDetailsCubit>(
-                                            context,
-                                          ).selectSize(size);
-                                        },
-                                        child: sizeList(
-                                          size: size,
-                                          context: context,
-                                          state: state,
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+                              bloc: BlocProvider.of<ProductDetailsCubit>(context),
+                              buildWhen: (previous, current) =>
+                                  current is ProductDetailsLoaded ||
+                                  current is SizeSelected,
+                              builder: (context, state) => Row(
+                                children: ProductSize.values
+                                    .map(
+                                      (size) => Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 6.0,
+                                          right: 8.0,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            BlocProvider.of<ProductDetailsCubit>(
+                                              context,
+                                            ).selectSize(size);
+                                          },
+                                          child: sizeList(
+                                            size: size,
+                                            context: context,
+                                            state: state,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                  .toList(),
+                                    )
+                                    .toList(),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),

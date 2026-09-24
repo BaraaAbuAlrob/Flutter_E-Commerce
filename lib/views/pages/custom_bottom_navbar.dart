@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
+import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:flutter_ecommerce_app/view_models/favorites_cubit/favorites_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:flutter_ecommerce_app/views/pages/cart_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/favorites_page.dart';
@@ -84,7 +86,10 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
       case 3:
         actions = [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamed(AppRoutes.settingsRoute);
+            },
             icon: const Icon(Icons.settings_outlined),
           ),
         ];
@@ -93,9 +98,24 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
         actions = [];
     }
 
+    String subtitle;
+    switch (index) {
+      case 0:
+        subtitle = 'Let\'s go shopping!';
+        break;
+      case 2:
+        subtitle = 'Your Wishlist';
+        break;
+      case 3:
+        subtitle = 'My Account';
+        break;
+      default:
+        subtitle = 'Welcome';
+    }
+
     return CustomAppBar(
       centerTitle: false,
-      titleWidget: const UserProfileHeader(),
+      titleWidget: UserProfileHeader(subtitle: subtitle),
       actions: actions,
     );
   }
@@ -105,109 +125,164 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
     final primaryColor = Theme.of(context).primaryColor;
     final inactiveColor = Theme.of(context).disabledColor;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        _handleBackPress(context);
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Scaffold(
-            backgroundColor: AppColors.white,
-            appBar: _buildAppBar(context, _controller.index),
-            body: PersistentTabView(
-              controller: _controller,
-              tabs: [
-                // 1. الصفحة الرئيسية - Home
-                PersistentTabConfig(
-                  screen: BlocProvider(
-                    create: (context) {
-                      final cubit = HomeCubit();
-                      cubit.getHomeData();
-                      return cubit;
-                    },
-                    child: const HomePage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) {
+            final favCubit = FavoritesCubit();
+            favCubit.getFavorites();
+            return favCubit;
+          },
+        ),
+<<<<<<< HEAD
+        BlocProvider(
+          create: (context) {
+            final homeCubit = HomeCubit();
+            homeCubit.getHomeData();
+            return homeCubit;
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            final cartCubit = CartCubit();
+            cartCubit.getCartItems();
+            return cartCubit;
+          },
+        ),
+=======
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
+      ],
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          _handleBackPress(context);
+        },
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Scaffold(
+              backgroundColor: AppColors.white,
+              appBar: _buildAppBar(context, _controller.index),
+              body: PersistentTabView(
+                controller: _controller,
+                tabs: [
+                  // 1. الصفحة الرئيسية - Home
+                  PersistentTabConfig(
+<<<<<<< HEAD
+                    screen: const HomePage(),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.home),
+                      inactiveIcon: const Icon(Icons.home_outlined),
+                      title: "Home",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
                   ),
-                  item: ItemConfig(
-                    icon: const Icon(Icons.home),
-                    inactiveIcon: const Icon(Icons.home_outlined),
-                    title: "Home",
-                    activeForegroundColor: primaryColor,
-                    inactiveForegroundColor: inactiveColor,
-                  ),
-                ),
 
-                // 2. السلة - Cart
-                PersistentTabConfig(
-                  screen: BlocProvider(
-                    create: (context) {
-                      final cubit = CartCubit();
-                      cubit.getCartItems();
-                      return cubit;
-                    },
-                    child: CartPage(
+                  // 2. السلة - Cart
+                  PersistentTabConfig(
+                    screen: CartPage(
                       onBackToHome: () {
                         _controller.jumpToTab(0);
+=======
+                    screen: BlocProvider(
+                      create: (context) {
+                        final cubit = HomeCubit();
+                        cubit.getHomeData();
+                        return cubit;
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
                       },
+                      child: const HomePage(),
+                    ),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.home),
+                      inactiveIcon: const Icon(Icons.home_outlined),
+                      title: "Home",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
+<<<<<<< HEAD
+                    item: ItemConfig(
+                      icon: const Icon(Icons.shopping_cart),
+                      inactiveIcon: const Icon(Icons.shopping_cart_outlined),
+                      title: "Cart",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
+=======
+                  ),
+
+                  // 2. السلة - Cart
+                  PersistentTabConfig(
+                    screen: BlocProvider(
+                      create: (context) {
+                        final cubit = CartCubit();
+                        cubit.getCartItems();
+                        return cubit;
+                      },
+                      child: CartPage(
+                        onBackToHome: () {
+                          _controller.jumpToTab(0);
+                        },
+                      ),
+                    ),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.shopping_cart),
+                      inactiveIcon: const Icon(Icons.shopping_cart_outlined),
+                      title: "Cart",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
+                  ),
+
+                  // 3. المفضلة - Favorites
+                  PersistentTabConfig(
+                    screen: const FavoritesPage(),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.favorite),
+                      inactiveIcon: const Icon(Icons.favorite_border),
+                      title: "Favorites",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
                     ),
                   ),
-                  item: ItemConfig(
-                    icon: const Icon(Icons.shopping_cart),
-                    inactiveIcon: const Icon(Icons.shopping_cart_outlined),
-                    title: "Cart",
-                    activeForegroundColor: primaryColor,
-                    inactiveForegroundColor: inactiveColor,
-                  ),
-                ),
 
-                // 3. المفضلة - Favorites
-                PersistentTabConfig(
-                  screen: const FavoritesPage(),
-                  item: ItemConfig(
-                    icon: const Icon(Icons.favorite),
-                    inactiveIcon: const Icon(Icons.favorite_border),
-                    title: "Favorites",
-                    activeForegroundColor: primaryColor,
-                    inactiveForegroundColor: inactiveColor,
-                  ),
-                ),
-
-                // 4. الحساب الشخصي - Profile
-                PersistentTabConfig(
-                  screen: const ProfilePage(),
-                  item: ItemConfig(
-                    icon: const Icon(Icons.person),
-                    inactiveIcon: const Icon(Icons.person_outline),
-                    title: "Profile",
-                    activeForegroundColor: primaryColor,
-                    inactiveForegroundColor: inactiveColor,
-                  ),
-                ),
-              ],
-
-              // تعديل استايل وخصائص الـ Navbar هنا:
-              navBarBuilder: (navBarConfig) => Style6BottomNavBar(
-                navBarConfig: navBarConfig,
-                navBarDecoration: NavBarDecoration(
-                  padding: const EdgeInsets.all(10),
-                  color: AppColors.white,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.shadowMedium,
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, -3),
+                  // 4. الحساب الشخصي - Profile
+                  PersistentTabConfig(
+                    screen: const ProfilePage(),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.person),
+                      inactiveIcon: const Icon(Icons.person_outline),
+                      title: "Profile",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
                     ),
-                  ],
+                  ),
+                ],
+
+                navBarBuilder: (navBarConfig) => Style6BottomNavBar(
+                  navBarConfig: navBarConfig,
+                  navBarDecoration: NavBarDecoration(
+                    padding: const EdgeInsets.all(10),
+                    color: AppColors.white,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(24)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.shadowMedium,
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: const Offset(0, -3),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

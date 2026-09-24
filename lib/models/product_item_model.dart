@@ -1,3 +1,4 @@
+// ignore: constant_identifier_names
 enum ProductSize { ns, S, M, L, XL }
 
 enum ProductColor { nc, black, white, red, blue, green, yellow }
@@ -18,8 +19,7 @@ class ProductItemModel {
     required this.id,
     required this.name,
     required this.imgUrl,
-    this.description =
-        'write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products... write any description for all products...',
+    this.description = '',
     required this.price,
     this.isFavorite = false,
     this.category = 'Others',
@@ -53,96 +53,67 @@ class ProductItemModel {
       size: size ?? this.size,
     );
   }
-}
 
-List<ProductItemModel> dummyProducts = [
-  ProductItemModel(
-    id: '1',
-    name: 'T-shirt',
-    imgUrl: 'https://pngimg.com/uploads/tshirt/tshirt_PNG5450.png',
-    price: 10,
-    category: 'Clothes',
-    averageRate: '4.5',
-  ),
-  ProductItemModel(
-    id: '2',
-    name: 'Black Shoes',
-    imgUrl:
-        'https://pngimg.com/uploads/running_shoes/running_shoes_PNG5823.png',
-    price: 20,
-    category: 'Shoes',
-    averageRate: '4.0',
-  ),
-  ProductItemModel(
-    id: '3',
-    name: 'Trousers',
-    imgUrl: 'https://pngimg.com/uploads/jeans/jeans_PNG5775.png',
-    price: 30,
-    category: 'Clothes',
-    averageRate: '4.2',
-  ),
-  ProductItemModel(
-    id: '4',
-    name: 'Pack of Tomatoes',
-    imgUrl: 'https://pngimg.com/uploads/tomato/tomato_PNG12594.png',
-    price: 10,
-    category: 'Groceries',
-    averageRate: '4.0',
-  ),
-  ProductItemModel(
-    id: '5',
-    name: 'Pack of Potatoes',
-    imgUrl: 'https://pngimg.com/uploads/potato/potato_PNG7081.png',
-    price: 10,
-    category: 'Groceries',
-    averageRate: '4.0',
-  ),
-  ProductItemModel(
-    id: '6',
-    name: 'Pack of Onions',
-    imgUrl: 'https://pngimg.com/uploads/onion/onion_PNG3821.png',
-    price: 10,
-    category: 'Groceries',
-    averageRate: '3.0',
-  ),
-  ProductItemModel(
-    id: '7',
-    name: 'Pack of Apples',
-    imgUrl: 'https://pngimg.com/uploads/apple/apple_PNG12405.png',
-    price: 10,
-    category: 'Fruits',
-    averageRate: '4.7',
-  ),
-  ProductItemModel(
-    id: '8',
-    name: 'Pack of Oranges',
-    imgUrl: 'https://pngimg.com/uploads/orange/orange_PNG780.png',
-    price: 10,
-    category: 'Fruits',
-    averageRate: '3.1',
-  ),
-  ProductItemModel(
-    id: '9',
-    name: 'Pack of Bananas',
-    imgUrl: 'https://pngimg.com/uploads/banana/banana_PNG827.png',
-    price: 10,
-    category: 'Fruits',
-    averageRate: '4.3',
-  ),
-  ProductItemModel(
-    id: '10',
-    name: 'Pack of Mangoes',
-    imgUrl: 'https://pngimg.com/uploads/mango/mango_PNG9179.png',
-    price: 10,
-    category: 'Fruits',
-    averageRate: '2.7',
-  ),
-  ProductItemModel(
-    id: '11',
-    name: 'Sweet Shirt',
-    imgUrl: 'https://pngimg.com/uploads/hoodie/hoodie_PNG38.png',
-    price: 15,
-    category: 'Clothes',
-    averageRate: '2.4',
-  ),
-];
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'imgUrl': imgUrl,
+      'description': description,
+      'price': price,
+      'isFavorite': isFavorite,
+      'category': category,
+      'averageRate': averageRate,
+      'color': color.name,
+      'size': size.name,
+    };
+  }
+
+  factory ProductItemModel.fromMap(Map<String, dynamic> data, String documentId) {
+    String parsedImgUrl = '';
+    if (data['imgUrl'] != null && data['imgUrl'].toString().isNotEmpty) {
+      parsedImgUrl = data['imgUrl'].toString();
+    } else if (data['images'] is List && (data['images'] as List).isNotEmpty) {
+      parsedImgUrl = (data['images'] as List).first.toString();
+    } else if (data['image'] != null) {
+      parsedImgUrl = data['image'].toString();
+    }
+
+    ProductSize parsedSize = ProductSize.ns;
+    if (data['size'] != null) {
+      final sizeStr = data['size'].toString();
+      parsedSize = ProductSize.values.firstWhere(
+        (s) => s.name.toLowerCase() == sizeStr.toLowerCase(),
+        orElse: () => ProductSize.ns,
+      );
+    } else if (data['sizes'] is List && (data['sizes'] as List).isNotEmpty) {
+      final firstSize = (data['sizes'] as List).first.toString();
+      parsedSize = ProductSize.values.firstWhere(
+        (s) => s.name.toLowerCase() == firstSize.toLowerCase(),
+        orElse: () => ProductSize.ns,
+      );
+    }
+
+    ProductColor parsedColor = ProductColor.nc;
+    if (data['color'] != null) {
+      final colorStr = data['color'].toString();
+      parsedColor = ProductColor.values.firstWhere(
+        (c) => c.name.toLowerCase() == colorStr.toLowerCase(),
+        orElse: () => ProductColor.nc,
+      );
+    }
+
+    return ProductItemModel(
+      id: documentId.isNotEmpty ? documentId : (data['id']?.toString() ?? ''),
+      name: data['name']?.toString() ?? '',
+      imgUrl: parsedImgUrl,
+      description: data['description']?.toString() ?? '',
+      price: (data['price'] as num?)?.toDouble() ?? 0.0,
+      isFavorite: data['isFavorite'] == true,
+      category: data['category']?.toString() ?? 'Others',
+      averageRate: (data['averageRate'] ?? data['rating'])?.toString() ?? '0.0',
+      color: parsedColor,
+      size: parsedSize,
+    );
+  }
+}

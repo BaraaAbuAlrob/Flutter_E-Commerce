@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dash/flutter_dash.dart';
-import 'package:flutter_ecommerce_app/models/add_to_cart_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_colors.dart';
 import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
@@ -44,38 +43,6 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     final cubit = BlocProvider.of<CartCubit>(context);
-
-    if (cubit.state is CartLoaded) {
-      final loadedState = cubit.state as CartLoaded;
-      final currentSubtotal = dummyCart.fold<double>(
-        0,
-        (prev, item) => prev + item.totalPrice,
-      );
-      final currentTotalQty = dummyCart.fold<int>(
-        0,
-        (prev, item) => prev + item.quantity,
-      );
-      final loadedTotalQty = loadedState.cartItems.fold<int>(
-        0,
-        (prev, item) => prev + item.quantity,
-      );
-
-      if (loadedState.cartItems.length != dummyCart.length ||
-          loadedTotalQty != currentTotalQty ||
-          loadedState.subtotal != currentSubtotal) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            cubit.getCartItems();
-          }
-        });
-      }
-    } else if (cubit.state is CartInitial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          cubit.getCartItems();
-        }
-      });
-    }
 
     return PopScope(
       canPop: false,

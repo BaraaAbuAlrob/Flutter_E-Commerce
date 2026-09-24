@@ -4,6 +4,7 @@ import 'package:flutter_ecommerce_app/models/address_model.dart';
 import 'package:flutter_ecommerce_app/utils/app_routes.dart';
 import 'package:flutter_ecommerce_app/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/address_cubit/address_cubit.dart';
+import 'package:flutter_ecommerce_app/view_models/favorites_cubit/favorites_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/login_cubit/login_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:flutter_ecommerce_app/view_models/register_cubit/register_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_ecommerce_app/views/pages/custom_bottom_navbar.dart';
 import 'package:flutter_ecommerce_app/views/pages/login_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/product_details_page.dart';
 import 'package:flutter_ecommerce_app/views/pages/register_page.dart';
+import 'package:flutter_ecommerce_app/views/pages/settings_page.dart';
 
 class AppRouter {
   static Route<dynamic> onGenerateRoutes(RouteSettings settings) {
@@ -65,14 +67,30 @@ class AppRouter {
       case AppRoutes.productDetailsPage:
         final String productId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (BuildContext context) {
-              final cubit = ProductDetailsCubit();
-              cubit.getProductDetails(productId: productId);
-              return cubit;
-            },
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (BuildContext context) {
+                  final cubit = ProductDetailsCubit();
+                  cubit.getProductDetails(productId: productId);
+                  return cubit;
+                },
+              ),
+              BlocProvider(
+                create: (BuildContext context) {
+                  final favCubit = FavoritesCubit();
+                  favCubit.getFavorites();
+                  return favCubit;
+                },
+              ),
+            ],
             child: ProductDetailsPage(productId: productId),
           ),
+          settings: settings,
+        );
+      case AppRoutes.settingsRoute:
+        return MaterialPageRoute(
+          builder: (_) => const SettingsPage(),
           settings: settings,
         );
       default:

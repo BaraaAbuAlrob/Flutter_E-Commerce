@@ -187,11 +187,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                           if (addedCard is PaymentCardModel) {
                             paymentMethodsCubit.fetchPaymentMethods(addedCard);
                           } else {
-                            paymentMethodsCubit.fetchPaymentMethods(
-                              dummyPaymentCards.isNotEmpty
-                                  ? dummyPaymentCards.last
-                                  : selectedCard,
-                            );
+                            paymentMethodsCubit.fetchPaymentMethods(selectedCard);
                           }
                         },
                         borderRadius: BorderRadius.circular(16),

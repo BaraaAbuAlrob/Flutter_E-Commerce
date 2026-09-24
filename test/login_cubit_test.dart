@@ -1,12 +1,27 @@
+import 'package:flutter_ecommerce_app/secrvices/auth_repository.dart';
 import 'package:flutter_ecommerce_app/view_models/login_cubit/login_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class FakeAuthRepository extends AuthRepository {
+  FakeAuthRepository() : super.forTesting();
+
+  @override
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 50));
+  }
+}
 
 void main() {
   group('LoginCubit Email Validation Tests', () {
     late LoginCubit cubit;
+    late FakeAuthRepository fakeAuthRepo;
 
     setUp(() {
-      cubit = LoginCubit();
+      fakeAuthRepo = FakeAuthRepository();
+      cubit = LoginCubit(authRepository: fakeAuthRepo);
     });
 
     tearDown(() {
