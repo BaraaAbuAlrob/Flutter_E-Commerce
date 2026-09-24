@@ -134,6 +134,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
             return favCubit;
           },
         ),
+<<<<<<< HEAD
         BlocProvider(
           create: (context) {
             final homeCubit = HomeCubit();
@@ -148,6 +149,8 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
             return cartCubit;
           },
         ),
+=======
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
       ],
       child: PopScope(
         canPop: false,
@@ -166,6 +169,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 tabs: [
                   // 1. الصفحة الرئيسية - Home
                   PersistentTabConfig(
+<<<<<<< HEAD
                     screen: const HomePage(),
                     item: ItemConfig(
                       icon: const Icon(Icons.home),
@@ -181,7 +185,47 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                     screen: CartPage(
                       onBackToHome: () {
                         _controller.jumpToTab(0);
+=======
+                    screen: BlocProvider(
+                      create: (context) {
+                        final cubit = HomeCubit();
+                        cubit.getHomeData();
+                        return cubit;
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
                       },
+                      child: const HomePage(),
+                    ),
+                    item: ItemConfig(
+                      icon: const Icon(Icons.home),
+                      inactiveIcon: const Icon(Icons.home_outlined),
+                      title: "Home",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
+<<<<<<< HEAD
+                    item: ItemConfig(
+                      icon: const Icon(Icons.shopping_cart),
+                      inactiveIcon: const Icon(Icons.shopping_cart_outlined),
+                      title: "Cart",
+                      activeForegroundColor: primaryColor,
+                      inactiveForegroundColor: inactiveColor,
+                    ),
+=======
+                  ),
+
+                  // 2. السلة - Cart
+                  PersistentTabConfig(
+                    screen: BlocProvider(
+                      create: (context) {
+                        final cubit = CartCubit();
+                        cubit.getCartItems();
+                        return cubit;
+                      },
+                      child: CartPage(
+                        onBackToHome: () {
+                          _controller.jumpToTab(0);
+                        },
+                      ),
                     ),
                     item: ItemConfig(
                       icon: const Icon(Icons.shopping_cart),
@@ -190,6 +234,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                       activeForegroundColor: primaryColor,
                       inactiveForegroundColor: inactiveColor,
                     ),
+>>>>>>> b15c79314ca43593c671193767c44b46c0f5f92a
                   ),
 
                   // 3. المفضلة - Favorites
