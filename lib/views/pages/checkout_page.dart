@@ -110,23 +110,48 @@ class CheckoutPage extends StatelessWidget {
           builder: (context) {
             final cubit = BlocProvider.of<CheckoutCubit>(context);
 
-            return BlocBuilder<CheckoutCubit, CheckoutState>(
-              bloc: cubit,
+            return BlocConsumer<CheckoutCubit, CheckoutState>(
+              listenWhen: (previous, current) =>
+                  current is OrderPlacedSuccess || current is CheckoutError,
+              listener: (context, state) {
+                if (state is OrderPlacedSuccess) {
+                  CustomSnackBar.showSuccess(
+                    context,
+                    message: 'Order #${state.orderId} placed successfully!',
+                  );
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                } else if (state is CheckoutError) {
+                  CustomSnackBar.showError(context, message: state.message);
+                }
+              },
               buildWhen: (previous, current) =>
                   current is CheckoutLoaded ||
                   current is CheckoutLoading ||
-                  current is CheckoutError,
+                  current is CheckoutPlacingOrder,
               builder: (context, state) {
                 if (state is CheckoutLoading) {
                   return const Center(
                     child: CircularProgressIndicator.adaptive(),
                   );
-                } else if (state is CheckoutError) {
-                  return Center(child: Text(state.message));
+                } else if (state is CheckoutPlacingOrder) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator.adaptive(),
+                        SizedBox(height: 16),
+                        Text(
+                          'Processing order...',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  );
                 } else if (state is CheckoutLoaded) {
                   final cartItems = state.checkoutItems;
                   return SafeArea(
                     child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Column(
@@ -183,7 +208,7 @@ class CheckoutPage extends StatelessWidget {
                                       .copyWith(color: AppColors.grey),
                                 ),
                                 Text(
-                                  '\$${state.totalAmount.toStringAsFixed(1)}',
+                                  '\$${state.totalAmount.toStringAsFixed(2)}',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleMedium,
@@ -204,10 +229,7 @@ class CheckoutPage extends StatelessWidget {
                                     );
                                     return;
                                   }
-                                  CustomSnackBar.showSuccess(
-                                    context,
-                                    message: 'Order placed successfully!',
-                                  );
+                                  cubit.placeOrder();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Theme.of(

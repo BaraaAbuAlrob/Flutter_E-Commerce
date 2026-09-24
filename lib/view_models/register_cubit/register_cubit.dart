@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_app/secrvices/auth_repository.dart';
 
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(RegisterInitial());
+  final AuthRepository _authRepository;
+
+  RegisterCubit({AuthRepository? authRepository})
+      : _authRepository = authRepository ?? AuthRepository.instance,
+        super(RegisterInitial());
 
   // Strict email regex validator: checks username, @, domain/provider, and TLD
   static final RegExp _emailRegex = RegExp(
@@ -54,36 +59,37 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
 
     emit(RegisterLoading());
-    await Future.delayed(const Duration(milliseconds: 1000));
-
-    emit(
-      RegisterSuccess(
-        username: trimmedUsername,
-        email: trimmedEmail,
-        message: 'Account created successfully! Welcome aboard.',
-      ),
-    );
+    try {
+      await _authRepository.signUpWithEmail(email: trimmedEmail, password: password, name: trimmedUsername);
+      emit(RegisterSuccess(username: trimmedUsername, email: trimmedEmail, message: 'Account created successfully! Welcome aboard.'));
+    } on AuthException catch (e) {
+      emit(RegisterFailure(e.message));
+    } catch (e) {
+      emit(RegisterFailure('خطأ غير معروف أثناء إنشاء الحساب'));
+    }
   }
 
   Future<void> signUpWithGoogle() async {
     emit(SocialRegisterLoading('Google'));
-    await Future.delayed(const Duration(milliseconds: 900));
-    emit(
-      SocialRegisterSuccess(
-        provider: 'Google',
-        message: 'Signed up with Google successfully!',
-      ),
-    );
+    try {
+      await _authRepository.signInWithGoogle();
+      emit(SocialRegisterSuccess(provider: 'Google', message: 'Signed up with Google successfully!'));
+    } on AuthException catch (e) {
+      emit(SocialRegisterFailure(provider: 'Google', errorMessage: e.message));
+    } catch (_) {
+      emit(SocialRegisterFailure(provider: 'Google', errorMessage: 'خطأ غير معروف أثناء تسجيل الحساب عبر Google'));
+    }
   }
 
   Future<void> signUpWithFacebook() async {
     emit(SocialRegisterLoading('Facebook'));
-    await Future.delayed(const Duration(milliseconds: 900));
-    emit(
-      SocialRegisterSuccess(
-        provider: 'Facebook',
-        message: 'Signed up with Facebook successfully!',
-      ),
-    );
+    try {
+      await _authRepository.signInWithFacebook();
+      emit(SocialRegisterSuccess(provider: 'Facebook', message: 'Signed up with Facebook successfully!'));
+    } on AuthException catch (e) {
+      emit(SocialRegisterFailure(provider: 'Facebook', errorMessage: e.message));
+    } catch (_) {
+      emit(SocialRegisterFailure(provider: 'Facebook', errorMessage: 'خطأ غير معروف أثناء تسجيل الحساب عبر Facebook'));
+    }
   }
 }

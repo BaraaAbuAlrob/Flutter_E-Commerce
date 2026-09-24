@@ -2,10 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/models/address_model.dart';
+import 'package:flutter_ecommerce_app/secrvices/local_storage_service.dart';
 
 part 'address_state.dart';
 
 class AddressCubit extends Cubit<AddressState> {
+  final LocalStorageService _localStorageService = LocalStorageService.instance;
+
   AddressCubit() : super(AddressInitial());
 
   static const List<Color> _pinColors = [
@@ -24,38 +27,20 @@ class AddressCubit extends Cubit<AddressState> {
   }
 
   void fetchAddresses([AddressModel? initialSelectedAddress]) {
-    if (state is AddressesFetched) {
-      if (dummyAddresses.isNotEmpty) {
-        final selected =
-            initialSelectedAddress ??
-            (state as AddressesFetched).selectedAddress ??
-            dummyAddresses.first;
-        emit(
-          AddressesFetched(
-            addresses: List.from(dummyAddresses),
-            selectedAddress: selected,
-          ),
-        );
-      } else {
-        emit(FailureFetchingAddresses('No addresses found'));
-      }
-      return;
-    }
+    try {
+      final addresses = _localStorageService.getAddresses();
+      final selected = initialSelectedAddress ??
+          (addresses.isNotEmpty ? addresses.first : null);
 
-    emit(FetchingAddresses());
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (dummyAddresses.isNotEmpty) {
-        final selected = initialSelectedAddress ?? dummyAddresses.first;
-        emit(
-          AddressesFetched(
-            addresses: List.from(dummyAddresses),
-            selectedAddress: selected,
-          ),
-        );
-      } else {
-        emit(FailureFetchingAddresses('No addresses found'));
-      }
-    });
+      emit(
+        AddressesFetched(
+          addresses: addresses,
+          selectedAddress: selected,
+        ),
+      );
+    } catch (e) {
+      emit(FailureFetchingAddresses('Failed to fetch addresses: $e'));
+    }
   }
 
   void selectAddress(AddressModel address) {
@@ -65,13 +50,13 @@ class AddressCubit extends Cubit<AddressState> {
     }
   }
 
-  void addAddress({
+  Future<void> addAddress({
     required String city,
     required String country,
     String? street,
     String? title,
     Color? pinColor,
-  }) {
+  }) async {
     emit(AddingAddress());
 
     if (city.trim().isEmpty || country.trim().isEmpty) {
@@ -90,33 +75,39 @@ class AddressCubit extends Cubit<AddressState> {
       pinColor: pinColor ?? getRandomPinColor(),
     );
 
-    Future.delayed(const Duration(milliseconds: 500), () {
-      dummyAddresses.insert(0, newAddress);
+    try {
+      await _localStorageService.saveAddress(newAddress);
       emit(AddressAdded(newAddress));
+
+      final allAddresses = _localStorageService.getAddresses();
       emit(
         AddressesFetched(
-          addresses: List.from(dummyAddresses),
+          addresses: allAddresses,
           selectedAddress: newAddress,
         ),
       );
-    });
+    } catch (e) {
+      emit(AddingAddressFailed('Failed to save address: $e'));
+    }
   }
 
   void searchAddresses(String query) {
     final cleanQuery = query.trim().toLowerCase();
+    final allAddresses = _localStorageService.getAddresses();
+
     if (cleanQuery.isEmpty) {
       emit(
         AddressesFetched(
-          addresses: List.from(dummyAddresses),
+          addresses: allAddresses,
           selectedAddress: (state is AddressesFetched)
               ? (state as AddressesFetched).selectedAddress
-              : (dummyAddresses.isNotEmpty ? dummyAddresses.first : null),
+              : (allAddresses.isNotEmpty ? allAddresses.first : null),
         ),
       );
       return;
     }
 
-    final filtered = dummyAddresses.where((item) {
+    final filtered = allAddresses.where((item) {
       final matchesCity = item.city.toLowerCase().contains(cleanQuery);
       final matchesCountry = item.country.toLowerCase().contains(cleanQuery);
       final matchesStreet =

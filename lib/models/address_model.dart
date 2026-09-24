@@ -25,39 +25,50 @@ class AddressModel {
 
   String get fullAddress =>
       (street != null && street!.isNotEmpty) ? street! : '$city, $country';
-}
 
-List<AddressModel> dummyAddresses = [
-  const AddressModel(
-    id: '1',
-    city: 'Los Angeles',
-    country: 'United States',
-    street: '5482 Adobe Falls Rd #15San Diego, California(CA), 92120',
-    title: 'House',
-    pinColor: Color(0xFF00D2B4),
-  ),
-  const AddressModel(
-    id: '2',
-    city: 'San Francisco',
-    country: 'United States',
-    street: '450 Townsend St, San Francisco, California(CA), 94107',
-    title: 'San Francisco',
-    pinColor: Color(0xFF7E57C2),
-  ),
-  const AddressModel(
-    id: '3',
-    city: 'New York',
-    country: 'United States',
-    street: '350 5th Ave, New York, NY 10118',
-    title: 'New York',
-    pinColor: Color(0xFFFF5252),
-  ),
-  const AddressModel(
-    id: '4',
-    city: 'San Diego',
-    country: 'United States',
-    street: '5482 Adobe Falls Rd #15San Diego, California(CA), 92120',
-    title: 'House',
-    pinColor: Color(0xFFFF7043),
-  ),
-];
+  AddressModel copyWith({
+    String? id,
+    String? city,
+    String? country,
+    String? street,
+    String? title,
+    Color? pinColor,
+    bool? isDefault,
+  }) {
+    return AddressModel(
+      id: id ?? this.id,
+      city: city ?? this.city,
+      country: country ?? this.country,
+      street: street ?? this.street,
+      title: title ?? this.title,
+      pinColor: pinColor ?? this.pinColor,
+      isDefault: isDefault ?? this.isDefault,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'city': city,
+      'country': country,
+      'street': street,
+      'title': title,
+      'pinColor': pinColor?.toARGB32(),
+      'isDefault': isDefault,
+    };
+  }
+
+  factory AddressModel.fromMap(Map<dynamic, dynamic> map) {
+    return AddressModel(
+      id: map['id']?.toString() ?? '',
+      city: map['city']?.toString() ?? '',
+      country: map['country']?.toString() ?? '',
+      street: map['street']?.toString(),
+      title: map['title']?.toString(),
+      pinColor: map['pinColor'] != null
+          ? Color(map['pinColor'] as int)
+          : null,
+      isDefault: map['isDefault'] == true,
+    );
+  }
+}

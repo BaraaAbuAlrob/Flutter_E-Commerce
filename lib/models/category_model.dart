@@ -12,53 +12,52 @@ class CategoryModel {
   CategoryModel({
     required this.id,
     required this.name,
-    required this.productsCount,
+    this.productsCount = 0,
     this.bgColor = AppColors.primary,
     this.textColor = AppColors.white,
-    this.imagePath =
-        'https://img.pixelvault.dev/playground/tmp_4k77xiu8c4je.png',
+    this.imagePath = '',
   });
-}
 
-List<CategoryModel> dummyCategories = [
-  CategoryModel(
-    id: '1',
-    name: 'New Arrivals',
-    productsCount: 208,
-    bgColor: AppColors.blue,
-    textColor: AppColors.white,
-    imagePath: 'assets/images/category_images/new_arrival.png',
-  ),
-  CategoryModel(
-    id: '2',
-    name: 'Clothes',
-    productsCount: 358,
-    bgColor: AppColors.green,
-    textColor: AppColors.white,
-    imagePath: 'assets/images/category_images/clothes.png',
-  ),
-  CategoryModel(
-    id: '3',
-    name: 'Bags',
-    productsCount: 160,
-    bgColor: AppColors.black,
-    textColor: AppColors.white,
-    imagePath: 'assets/images/category_images/school_bag.png',
-  ),
-  CategoryModel(
-    id: '4',
-    name: 'Shoes',
-    productsCount: 230,
-    bgColor: AppColors.white,
-    textColor: AppColors.black,
-    imagePath: 'assets/images/category_images/shoes.png',
-  ),
-  CategoryModel(
-    id: '5',
-    name: 'Electronics',
-    productsCount: 101,
-    bgColor: AppColors.primary,
-    textColor: AppColors.black,
-    imagePath: 'assets/images/category_images/electronics.png',
-  ),
-];
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'productsCount': productsCount,
+      'bgColor': bgColor.toARGB32(),
+      'textColor': textColor.toARGB32(),
+      'imagePath': imagePath,
+    };
+  }
+
+  factory CategoryModel.fromMap(Map<String, dynamic> data, String documentId) {
+    String parsedImg = '';
+    if (data['imagePath'] != null && data['imagePath'].toString().isNotEmpty) {
+      parsedImg = data['imagePath'].toString();
+    } else if (data['icon'] != null && data['icon'].toString().isNotEmpty) {
+      parsedImg = data['icon'].toString();
+    } else if (data['image'] != null && data['image'].toString().isNotEmpty) {
+      parsedImg = data['image'].toString();
+    } else if (data['imgUrl'] != null && data['imgUrl'].toString().isNotEmpty) {
+      parsedImg = data['imgUrl'].toString();
+    }
+
+    Color parsedBg = AppColors.primary;
+    if (data['bgColor'] is int) {
+      parsedBg = Color(data['bgColor'] as int);
+    }
+
+    Color parsedText = AppColors.white;
+    if (data['textColor'] is int) {
+      parsedText = Color(data['textColor'] as int);
+    }
+
+    return CategoryModel(
+      id: documentId.isNotEmpty ? documentId : (data['id']?.toString() ?? ''),
+      name: data['name']?.toString() ?? '',
+      productsCount: (data['productsCount'] as num?)?.toInt() ?? 0,
+      bgColor: parsedBg,
+      textColor: parsedText,
+      imagePath: parsedImg,
+    );
+  }
+}

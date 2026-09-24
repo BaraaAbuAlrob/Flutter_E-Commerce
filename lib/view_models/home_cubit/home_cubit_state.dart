@@ -15,8 +15,13 @@ final class HomeLoading extends HomeCubitState {
 final class HomeLoaded extends HomeCubitState {
   final List<HomeCarouselItemModel> carouselItems;
   final List<ProductItemModel> products;
+  final List<CategoryModel> categories;
 
-  const HomeLoaded({required this.carouselItems, required this.products});
+  const HomeLoaded({
+    required this.carouselItems,
+    required this.products,
+    this.categories = const [],
+  });
 }
 
 final class HomeError extends HomeCubitState {
