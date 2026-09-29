@@ -37,9 +37,9 @@ class ProductItem extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: productItem.imgUrl,
                         fit: BoxFit.contain,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
+                        fadeInDuration: const Duration(milliseconds: 150),
+                        fadeOutDuration: Duration.zero,
+                        placeholder: (context, url) => const SizedBox.shrink(),
                         errorWidget: (context, url, error) => const Center(
                           child: Icon(Icons.broken_image_outlined, color: AppColors.grey),
                         ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
@@ -8,39 +7,39 @@ part 'favorites_state.dart';
 
 class FavoritesCubit extends Cubit<FavoritesState> {
   final FirestoreServices _firestoreServices = FirestoreServices.instance;
-  StreamSubscription<List<ProductItemModel>>? _subscription;
 
   FavoritesCubit() : super(const FavoritesInitial());
 
   String? get _currentUserId => FirebaseAuth.instance.currentUser?.uid;
 
-  void getFavorites() {
+  Future<void> getFavorites({bool isRefresh = false}) async {
     final uid = _currentUserId;
     if (uid == null) {
       emit(const FavoritesLoaded(favorites: [], favoriteProductIds: {}));
       return;
     }
 
-    emit(const FavoritesLoading());
-    _subscription?.cancel();
-    _subscription = _firestoreServices
-        .collectionStream<ProductItemModel>(
-          path: 'users/$uid/favorites',
-          builder: (data, documentId) =>
-              ProductItemModel.fromMap(data, documentId),
-        )
-        .listen(
-          (favorites) {
-            final ids = favorites.map((e) => e.id).toSet();
-            emit(FavoritesLoaded(
-              favorites: favorites,
-              favoriteProductIds: ids,
-            ));
-          },
-          onError: (e) {
-            emit(FavoritesError(e.toString()));
-          },
-        );
+    if (!isRefresh && state is! FavoritesLoaded) {
+      emit(const FavoritesLoading());
+    }
+
+    try {
+      final favorites = await _firestoreServices.getCollection<ProductItemModel>(
+        path: 'users/$uid/favorites',
+        builder: (data, documentId) =>
+            ProductItemModel.fromMap(data, documentId),
+      );
+
+      final ids = favorites.map((e) => e.id).toSet();
+      emit(FavoritesLoaded(
+        favorites: favorites,
+        favoriteProductIds: ids,
+      ));
+    } catch (e) {
+      if (state is! FavoritesLoaded) {
+        emit(FavoritesError(e.toString()));
+      }
+    }
   }
 
   Future<void> toggleFavorite(ProductItemModel product) async {
@@ -48,10 +47,29 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     if (uid == null) return;
 
     final currentState = state;
-    bool isCurrentlyFav = false;
+    List<ProductItemModel> currentList = [];
+    Set<String> currentIds = {};
+
     if (currentState is FavoritesLoaded) {
-      isCurrentlyFav = currentState.favoriteProductIds.contains(product.id);
+      currentList = List.from(currentState.favorites);
+      currentIds = Set.from(currentState.favoriteProductIds);
     }
+
+    final isCurrentlyFav = currentIds.contains(product.id);
+
+    // Optimistic update
+    if (isCurrentlyFav) {
+      currentIds.remove(product.id);
+      currentList.removeWhere((item) => item.id == product.id);
+    } else {
+      currentIds.add(product.id);
+      currentList.add(product.copyWith(isFavorite: true));
+    }
+
+    emit(FavoritesLoaded(
+      favorites: currentList,
+      favoriteProductIds: currentIds,
+    ));
 
     try {
       final docPath = 'users/$uid/favorites/${product.id}';
@@ -64,7 +82,10 @@ class FavoritesCubit extends Cubit<FavoritesState> {
         );
       }
     } catch (e) {
-      // Error handling
+      // Revert to previous state if Firestore operation failed
+      if (currentState is FavoritesLoaded) {
+        emit(currentState);
+      }
     }
   }
 
@@ -73,11 +94,5 @@ class FavoritesCubit extends Cubit<FavoritesState> {
       return (state as FavoritesLoaded).favoriteProductIds.contains(productId);
     }
     return false;
-  }
-
-  @override
-  Future<void> close() {
-    _subscription?.cancel();
-    return super.close();
   }
 }

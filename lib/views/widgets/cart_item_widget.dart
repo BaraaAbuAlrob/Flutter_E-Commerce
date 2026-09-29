@@ -104,13 +104,9 @@ class CartItemWidget extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: cartItem.product.imgUrl,
                     fit: BoxFit.contain,
-                    placeholder: (context, url) => const Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
+                    fadeInDuration: const Duration(milliseconds: 150),
+                    fadeOutDuration: Duration.zero,
+                    placeholder: (context, url) => const SizedBox.shrink(),
                     errorWidget: (context, url, error) => const Icon(
                       Icons.image_not_supported_outlined,
                       color: AppColors.grey,

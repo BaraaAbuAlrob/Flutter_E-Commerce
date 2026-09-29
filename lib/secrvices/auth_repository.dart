@@ -142,6 +142,28 @@ class AuthRepository {
     }
   }
 
+  /// Send password reset email.
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_firebaseErrorMessage(e.code));
+    }
+  }
+
+  /// Update password for the currently signed in user.
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        throw AuthException('المستخدم غير مسجل الدخول');
+      }
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_firebaseErrorMessage(e.code));
+    }
+  }
+
   /// Sign out the current user safely from Firebase, Google, and Facebook.
   Future<void> signOut() async {
     try {

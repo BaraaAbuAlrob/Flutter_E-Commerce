@@ -3,16 +3,37 @@ import 'package:flutter_ecommerce_app/models/category_model.dart';
 import 'package:flutter_ecommerce_app/models/home_carousel_item_model.dart';
 import 'package:flutter_ecommerce_app/models/product_item_model.dart';
 import 'package:flutter_ecommerce_app/secrvices/firestore_services.dart';
+import 'package:flutter_ecommerce_app/secrvices/local_storage_service.dart';
 
 part 'home_cubit_state.dart';
 
 class HomeCubit extends Cubit<HomeCubitState> {
   final FirestoreServices _firestoreServices = FirestoreServices.instance;
+  final LocalStorageService _localStorageService = LocalStorageService.instance;
 
-  HomeCubit() : super(const HomeInitial());
+  HomeCubit() : super(HomeCubit._getInitialState());
+
+  static HomeCubitState _getInitialState() {
+    try {
+      final cached = LocalStorageService.instance.getHomeData();
+      if (cached != null &&
+          (cached.products.isNotEmpty || cached.categories.isNotEmpty)) {
+        return HomeLoaded(
+          carouselItems: cached.carouselItems,
+          products: cached.products,
+          categories: cached.categories,
+        );
+      }
+    } catch (_) {}
+    return const HomeInitial();
+  }
 
   Future<void> getHomeData() async {
-    emit(const HomeLoading());
+    // Only emit loading state if there is no loaded cache already displayed
+    if (state is! HomeLoaded) {
+      emit(const HomeLoading());
+    }
+
     try {
       // 1. Fetch Products from Firestore
       final products = await _firestoreServices.getCollection<ProductItemModel>(
@@ -48,6 +69,13 @@ class HomeCubit extends Cubit<HomeCubitState> {
             .toList();
       }
 
+      // Persist to local cache for instant zero-delay loading on next start
+      _localStorageService.saveHomeData(
+        products: products,
+        categories: categories,
+        carouselItems: carouselItems,
+      );
+
       emit(
         HomeLoaded(
           carouselItems: carouselItems,
@@ -56,7 +84,10 @@ class HomeCubit extends Cubit<HomeCubitState> {
         ),
       );
     } catch (e) {
-      emit(HomeError(message: 'Failed to fetch home data: ${e.toString()}'));
+      // If we already have cached data on screen, keep it
+      if (state is! HomeLoaded) {
+        emit(HomeError(message: 'Failed to fetch home data: ${e.toString()}'));
+      }
     }
   }
 }

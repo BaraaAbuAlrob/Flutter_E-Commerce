@@ -109,8 +109,8 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
             type: SnackBarType.success,
           );
 
-          // Automatically open Create New Password bottom sheet simulating clicking the reset link
-          Future.delayed(const Duration(milliseconds: 300), () {
+          // Automatically open Create New Password bottom sheet
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               final cubit = context.read<LoginCubit>();
               showCreateNewPasswordBottomSheet(

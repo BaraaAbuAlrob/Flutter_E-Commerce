@@ -16,8 +16,11 @@ class CategoriesTabView extends StatelessWidget {
         width: 100,
         height: 100,
         fit: BoxFit.contain,
-        placeholder: (context, url) => const Center(
-          child: CircularProgressIndicator.adaptive(),
+        fadeInDuration: const Duration(milliseconds: 150),
+        fadeOutDuration: Duration.zero,
+        placeholder: (context, url) => const SizedBox(
+          width: 100,
+          height: 100,
         ),
         errorWidget: (context, url, error) => const Icon(
           Icons.category_outlined,
