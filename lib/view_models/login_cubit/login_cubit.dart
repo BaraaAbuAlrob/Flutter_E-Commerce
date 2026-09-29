@@ -108,14 +108,19 @@ class LoginCubit extends Cubit<LoginState> {
     }
 
     emit(SendingResetCode());
-    await Future.delayed(const Duration(milliseconds: 1100));
-
-    emit(
-      ResetCodeSent(
-        email: trimmed,
-        message: 'Reset code and password reset link sent to $trimmed',
-      ),
-    );
+    try {
+      await _authRepository.sendPasswordResetEmail(email: trimmed);
+      emit(
+        ResetCodeSent(
+          email: trimmed,
+          message: 'Reset link sent to $trimmed. Please check your email.',
+        ),
+      );
+    } on AuthException catch (e) {
+      emit(ResetCodeFailure(e.message));
+    } catch (_) {
+      emit(ResetCodeFailure('Failed to send reset link. Please try again.'));
+    }
   }
 
   Future<void> changePassword({
@@ -142,13 +147,18 @@ class LoginCubit extends Cubit<LoginState> {
     }
 
     emit(ChangingPassword());
-    await Future.delayed(const Duration(milliseconds: 1100));
-
-    emit(
-      PasswordChangedSuccess(
-        message: 'Password changed successfully! Please log in.',
-      ),
-    );
+    try {
+      await _authRepository.updatePassword(newPassword: newPassword);
+      emit(
+        PasswordChangedSuccess(
+          message: 'Password changed successfully! Please log in.',
+        ),
+      );
+    } on AuthException catch (e) {
+      emit(PasswordChangeFailure(e.message));
+    } catch (_) {
+      emit(PasswordChangeFailure('Failed to change password. Please try again.'));
+    }
   }
 }
 

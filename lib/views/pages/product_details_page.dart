@@ -270,6 +270,18 @@ class ProductDetailsPage extends StatelessWidget {
                         CachedNetworkImage(
                           imageUrl: product.imgUrl,
                           height: size.height * 0.4,
+                          fadeInDuration: const Duration(milliseconds: 150),
+                          fadeOutDuration: Duration.zero,
+                          placeholder: (context, url) => SizedBox(
+                            height: size.height * 0.4,
+                          ),
+                          errorWidget: (context, url, error) => const Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              size: 60,
+                              color: AppColors.grey,
+                            ),
+                          ),
                         ),
                       ],
                     ),

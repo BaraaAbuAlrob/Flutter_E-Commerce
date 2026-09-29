@@ -85,8 +85,10 @@ class HomeTabView extends StatelessWidget {
                             imageUrl: state.carouselItems[itemIndex].imgUrl,
                             fit: BoxFit.cover,
                             width: double.infinity,
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator.adaptive(),
+                            fadeInDuration: const Duration(milliseconds: 150),
+                            fadeOutDuration: Duration.zero,
+                            placeholder: (context, url) => Container(
+                              color: AppColors.grey200,
                             ),
                             errorWidget: (context, url, error) => Container(
                               color: AppColors.grey200,
